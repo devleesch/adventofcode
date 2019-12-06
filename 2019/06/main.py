@@ -29,6 +29,13 @@ def countOrbits(obj):
         obj = obj.parent
     return count
 
+def getParents(obj):
+    parents = []
+    while(obj.parent != None):
+        parents.append(obj.parent)
+        obj = obj.parent
+    return set(parents)
+
 def main():
     objects = {}
     datas = file.read("2019/06/input.txt")
@@ -47,5 +54,11 @@ def main():
         count += countOrbits(objects.get(o))
 
     print("count: {}".format(count))
+
+    you = getOrCreateObject(objects, "YOU")
+    youParents = getParents(you)
+    san = getOrCreateObject(objects, "SAN")
+    sanParents = getParents(san)
+    print(len(youParents ^ sanParents))
 
 main()
