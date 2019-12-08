@@ -53,6 +53,6 @@ def main():
         if(r[0] < min0[0]):
             min0 = r
 
-    print(min0)
+    print("min0: {} => {} * {} = {}".format(min0, min0[1], min0[2], min0[1]*min0[2]))
 
 main()
