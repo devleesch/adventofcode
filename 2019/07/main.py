@@ -5,7 +5,9 @@ import file
 class Amplifier:
     def __init__(self, datas, phase):
         self.datas = datas
-        self.inputs = [phase]
+        self.inputs = []
+        self.inputs.append(phase)
+        self.i = 0
 
     def modesAndOpcode(self, data):
         modes = []
@@ -32,10 +34,9 @@ class Amplifier:
         halt = False
         self.inputs.append(signal)
 
-        i = 0
         input = None
-        while(i < len(self.datas)):
-            modes, opcode = self.modesAndOpcode(self.datas[i])
+        while(self.i < len(self.datas)):
+            modes, opcode = self.modesAndOpcode(self.datas[self.i])
             
             if opcode == "99": #halt
                 halt = True
@@ -43,16 +44,16 @@ class Amplifier:
             elif opcode == "03": #input
                 input = self.inputs.pop(0)
             
-            parameters = self.getParameters(i, opcode)
+            parameters = self.getParameters(self.i, opcode)
             operation = Operation(modes, opcode, parameters)
             currentSignal = operation.evaluate(self.datas, input)
+
+            input = None
+            self.i = operation.getNext(self.i)
 
             if opcode == "04": #output
                 signal = currentSignal
                 break
-
-            input = None
-            i = operation.getNext(i)
 
         return halt, signal
         
@@ -134,7 +135,7 @@ class Operation:
         elif self.opcode == "07":
             datas[self.parameters[2]] = 1 if self.values[0] < self.values[1] else 0
         elif self.opcode == "08":
-            datas[self.parameters[2]] = 1 if self.value1 == self.value2 else 0
+            datas[self.parameters[2]] = 1 if self.values[0] == self.values[1] else 0
 
     def value(self, mode, p, data):
         if(mode == 0):
@@ -161,26 +162,27 @@ def heapPermutation(a, size, n, phases):
 
 def main():
     permutations = []
-    a = [4,3,2,1,0]
+    #a = [0,1,2,3,4]
+    a = [9,8,7,6,5]
     n = len(a)
     heapPermutation(a, n, n, permutations)
 
     maxThuster = -sys.maxsize
     for phases in permutations:
+        print(phases)
         data = file.read("2019/07/input1.txt")[0].split(',')
         amplifiers = []
-        amplifiers.append(Amplifier(data.copy(), phases[0]))
-        amplifiers.append(Amplifier(data.copy(), phases[1]))
-        amplifiers.append(Amplifier(data.copy(), phases[2]))
-        amplifiers.append(Amplifier(data.copy(), phases[3]))
-        amplifiers.append(Amplifier(data.copy(), phases[4]))
+        for i in range(5):
+            amplifiers.append(Amplifier(data.copy(), phases[i]))
 
         signal = 0
-        for a in amplifiers:
-            halt, signal = a.evaluate(signal)
+        i = 0
+        while(True):
+            amplifier = amplifiers[i%5]
+            halt, signal = amplifier.evaluate(signal)
             if halt:
                 break
-        
+            i += 1
         maxThuster = max(signal, maxThuster)
     print("max: {}".format(maxThuster))
 
