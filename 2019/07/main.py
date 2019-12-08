@@ -2,15 +2,66 @@ import sys
 sys.path.append('2019/lib')
 import file
 
+class Amplifier:
+    def __init__(self, datas, phase):
+        self.datas = datas
+        self.inputs = [phase]
+
+    def modesAndOpcode(self, data):
+        modes = []
+        opcode = None
+        
+        while(len(data) < 5):
+            data = "0" + data
+        
+        for i in range(3):
+            modes.append(int(data[i]))
+
+        opcode = data[3:]
+
+        return modes, opcode
+    
+    def getParameters(self, start, opcode):
+        parameters = []
+        for i in range(1, Operation.getSize(opcode)):
+            parameters.append(int(self.datas[start+i]))
+
+        return parameters
+
+    def evaluate(self, signal):
+        halt = False
+        self.inputs.append(signal)
+
+        i = 0
+        input = None
+        while(i < len(self.datas)):
+            modes, opcode = self.modesAndOpcode(self.datas[i])
+            
+            if opcode == "99": #halt
+                halt = True
+                break
+            elif opcode == "03": #input
+                input = self.inputs.pop(0)
+            
+            parameters = self.getParameters(i, opcode)
+            operation = Operation(modes, opcode, parameters)
+            currentSignal = operation.evaluate(self.datas, input)
+
+            if opcode == "04": #output
+                signal = currentSignal
+                break
+
+            input = None
+            i = operation.getNext(i)
+
+        return halt, signal
+        
 class Operation:
-    def __init__(self, modes, opcode, p1, p2, p3):
+    def __init__(self, modes, opcode, parameters):
         self.modes = modes
         self.opcode = opcode
-        self.p1 = p1
-        self.p2 = p2
-        self.p3 = p3
-        self.value1 = None
-        self.value2 = None
+        self.parameters = parameters
+        self.values = []
     
     def __str__(self):
         return "modes: {} \
@@ -19,139 +70,77 @@ class Operation:
                 p2: {}; \
                 p3: {}".format(self.modes, self.opcode, self.p1, self.p2, self.p3)
 
-    def getNext(self, i):
-        if(self.opcode == "01"):
-            return i + 4
-        elif(self.opcode == "02"):
-            return i + 4
-        elif(self.opcode == "03"):
-            return i + 2
-        elif(self.opcode == "04"):
-            return i + 2
-        elif(self.opcode == "05"):
-            if(self.value1 != 0):
-                return self.value2
-            else:
-                return i + 3
-        elif(self.opcode == "06"):
-            if(self.value1 == 0):
-                return self.value2
-            else:
-                return i + 3
-        elif(self.opcode == "07"):
-            return i + 4
-        elif(self.opcode == "08"):
-            return i + 4
+    @staticmethod
+    def getSize(opcode):
+        if(opcode == "01"):
+            return 4
+        elif(opcode == "02"):
+            return 4
+        elif(opcode == "03"):
+            return 2
+        elif(opcode == "04"):
+            return 2
+        elif(opcode == "05"):
+            return 3
+        elif(opcode == "06"):
+            return 3
+        elif(opcode == "07"):
+            return 4
+        elif(opcode == "08"):
+            return 4
 
-    def evaluate(self, data, input):
-        self.value1 = self.value(self.modes[2], self.p1, data)
+    def getNbValues(self):
         if self.opcode == "01":
-            self.value2 = self.value(self.modes[1], self.p2, data)
-            data[self.p3] = str(self.value1 + self.value2)
+            return 2
         elif self.opcode == "02":
-            self.value2 = self.value(self.modes[1], self.p2, data)
-            data[self.p3] = str(self.value1 * self.value2)
+            return 2
         elif self.opcode == "03":
-            data[self.p1] = input
+            return 0
         elif self.opcode == "04":
-            return int(data[self.p1])
+            return 0
         elif self.opcode == "05":
-            self.value2 = self.value(self.modes[1], self.p2, data)
+            return 2
         elif self.opcode == "06":
-            self.value2 = self.value(self.modes[1], self.p2, data)
+            return 2
         elif self.opcode == "07":
-            self.value2 = self.value(self.modes[1], self.p2, data)
-            if(self.value1 < self.value2):
-                data[self.p3] = 1
-            else:
-                data[self.p3] = 0
+            return 2
         elif self.opcode == "08":
-            self.value2 = self.value(self.modes[1], self.p2, data)
-            if(self.value1 == self.value2):
-                data[self.p3] = 1
-            else:
-                data[self.p3] = 0
+            return 2
 
-    
+    def getNext(self, i):
+        if self.opcode == "05":
+            if self.values[0] != 0:
+                return self.values[1]
+        elif self.opcode == "06":
+            if self.values[0] == 0:
+                return self.values[1]
+        
+        return i + Operation.getSize(self.opcode)
+
+    def evaluate(self, datas, input):
+        nbValues = self.getNbValues()
+        for i in range(nbValues):
+            self.values.append(self.value(self.modes[nbValues-i], self.parameters[i], datas))
+
+        if self.opcode == "01":
+            datas[self.parameters[2]] = str(self.values[0] + self.values[1])
+        elif self.opcode == "02":
+            datas[self.parameters[2]] = str(self.values[0] * self.values[1])
+        elif self.opcode == "03":
+            datas[self.parameters[0]] = input
+        elif self.opcode == "04":
+            return int(datas[self.parameters[0]])
+        # nothing to do for 05 and 06, they are just address changes
+        elif self.opcode == "07":
+            datas[self.parameters[2]] = 1 if self.values[0] < self.values[1] else 0
+        elif self.opcode == "08":
+            datas[self.parameters[2]] = 1 if self.value1 == self.value2 else 0
+
     def value(self, mode, p, data):
         if(mode == 0):
             return int(data[p])
         elif(mode == 1):
             return p
-
-def modeAndOpcode(data):
-    modes = []
-    opcode = None
-    
-    while(len(data) < 5):
-        data = "0" + data
-    
-    for i in range(3):
-        modes.append(int(data[i]))
-
-    opcode = data[3:]
-
-    return modes, opcode
-
-def parameters(data, start, opcode):
-    p1 = None
-    p2 = None
-    p3 = None
-    if(opcode == "01"):
-        p1 = int(data[start+1])
-        p2 = int(data[start+2])
-        p3 = int(data[start+3])
-    elif(opcode == "02"):
-        p1 = int(data[start+1])
-        p2 = int(data[start+2])
-        p3 = int(data[start+3])
-    elif(opcode == "03"):
-        p1 = int(data[start+1])
-    elif(opcode == "04"):
-        p1 = int(data[start+1])
-    elif(opcode == "05"):
-        p1 = int(data[start+1])
-        p2 = int(data[start+2])
-    elif(opcode == "06"):
-        p1 = int(data[start+1])
-        p2 = int(data[start+2])
-    elif(opcode == "07"):
-        p1 = int(data[start+1])
-        p2 = int(data[start+2])
-        p3 = int(data[start+3])
-    elif(opcode == "08"):
-        p1 = int(data[start+1])
-        p2 = int(data[start+2])
-        p3 = int(data[start+3])
-
-    return p1, p2, p3
-
-def getInput(phase, signal, nbInput):
-    if nbInput % 2 == 0:
-        return signal
-    else:
-        return phase
-
-def tryPhases(phases, data):
-    signal = 0
-    nbInput = 0
-
-    for p in phases:
-        i = 0
-        while(i < len(data)):
-            modes, opcode = modeAndOpcode(data[i])
-            if(opcode != "99"):
-                if opcode == "03":
-                    nbInput += 1
-                p1, p2, p3 = parameters(data, i, opcode)
-                operation = Operation(modes, opcode, p1, p2, p3)
-                s = operation.evaluate(data, getInput(p, signal, nbInput))
-                if s != None:
-                    signal = s
-                i = operation.getNext(i)
-            else:
-                break
-    return signal
 
 def heapPermutation(a, size, n, phases):
     # if size becomes 1 then prints the obtained 
@@ -171,20 +160,28 @@ def heapPermutation(a, size, n, phases):
             a[i], a[size-1] = a[size-1],a[i]
 
 def main():
-    data = file.read("2019/07/input1.txt")[0].split(',')
-    a = [0,1,2,3,4]
+    permutations = []
+    a = [4,3,2,1,0]
     n = len(a)
-    phases = []
-    heapPermutation(a, n, n, phases)
+    heapPermutation(a, n, n, permutations)
 
-    maxPhase = phases[0]
-    maxSignal = -sys.maxsize
-    for p in phases:
-        signal = tryPhases(p, data)
-        if(signal > maxSignal):
-            maxSignal = signal
-            maxPhase = p
+    maxThuster = -sys.maxsize
+    for phases in permutations:
+        data = file.read("2019/07/input1.txt")[0].split(',')
+        amplifiers = []
+        amplifiers.append(Amplifier(data.copy(), phases[0]))
+        amplifiers.append(Amplifier(data.copy(), phases[1]))
+        amplifiers.append(Amplifier(data.copy(), phases[2]))
+        amplifiers.append(Amplifier(data.copy(), phases[3]))
+        amplifiers.append(Amplifier(data.copy(), phases[4]))
 
-    print("maxSignal: {}".format(maxSignal))
+        signal = 0
+        for a in amplifiers:
+            halt, signal = a.evaluate(signal)
+            if halt:
+                break
+        
+        maxThuster = max(signal, maxThuster)
+    print("max: {}".format(maxThuster))
 
 main()
