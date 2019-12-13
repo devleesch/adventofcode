@@ -1,6 +1,7 @@
 import sys
 sys.path.append('2019/lib')
 import file
+import math
 
 class Asteroid:
     def __init__(self, x, y):
@@ -13,41 +14,30 @@ class Asteroid:
     def __str__(self):
         return "{};{}".format(self.x, self.y)
 
-class Slope:
-    def __init__(self):
-        self.value = None
-        self.signX = None
-        self.signY = None
-
-    def __eq__(self, value):
-        return self.value == value.value \
-            and self.signX == value.signX \
-            and self.signY == value.signY
+    def distance(self, other):
+        return math.sqrt(math.pow(other.x - self.x, 2) + math.pow(other.y - self.y, 2))
 
 def slope(a: Asteroid, b: Asteroid):
-    s = Slope()
     dX = b.x - a.x
-    s.signX = 1 if dX >=0 else -1
-
     dY = b.y - a.y
-    s.signY = 1 if dY >= 0 else -1
+    return normalDegrees(math.atan2(dY, dX))
 
-    if dX == 0:
-        s.value = sys.maxsize if dY >= 0 else -sys.maxsize
-    else:
-        s.value = dY / dX
-    return s
+def normalDegrees(atan):
+    normal = math.degrees(atan + math.pi / 2)
+    while(normal < 0):
+        normal += 360
+    return normal
 
-def countVisible(station: Asteroid, asteroids: list):
-    visibles = []
-    slopes = []
+def visibles(station: Asteroid, asteroids: list):
+    slopes = {}
     asteroids.remove(station)
     for asteroid in asteroids:
         s = slope(station, asteroid)
         if not s in slopes:
-            slopes.append(s)
-            visibles.append(asteroid)
-    return len(visibles)
+            slopes[s] = [asteroid]
+        else:
+            slopes[s].append(asteroid)
+    return slopes
 
 def main():
     lines = file.read("2019/10/input.txt")
@@ -62,9 +52,35 @@ def main():
             x +=1
         y += 1
 
-    maxAsteroids = 0
+    maxVisibles = 0
+    bestStation = None
+    bestRepartion = None
     for station in asteroids:
-        maxAsteroids = max(maxAsteroids, countVisible(station, asteroids.copy()))
-    print("max: {}".format(maxAsteroids))
+        repartition = visibles(station, asteroids.copy())
+        nbVisible = len(repartition)
+        if nbVisible > maxVisibles:
+            maxVisibles = nbVisible
+            bestStation = station
+            bestRepartion = repartition
+    print("station: {}, max: {}".format(station, maxVisibles))
+
+    keys = list(bestRepartion.keys())
+    keys.sort()
+    for a in bestRepartion.values():
+        a.sort(key = station.distance)
+
+    maxSubLength = 0
+    for k in keys:
+        maxSubLength = max(maxSubLength, len(bestRepartion[k]))
+    
+    asteroid = 1
+    for i in range(maxSubLength):
+        for k in keys:
+            if asteroid == 200:
+                print(bestRepartion[k][i])
+            asteroid += 1
+
+    print("end")
+    
 
 main()
