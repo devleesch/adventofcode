@@ -121,10 +121,6 @@ class Operation:
         elif opcode == "99":
             return 1
 
-class Board:
-    def __init__(self):
-        #chars = {'35': '#', '46': '.', '10': '\n', '^': '^'}
-
 def main():
     datas = [0]*10000
     i = 0
@@ -136,6 +132,6 @@ def main():
     board = [[]]
     while not computer.interupt == 99:
         _, output = computer.run()
-        print(chars.get(str(output)), end='')
+        print(chr(output), end='')
 
 main()
