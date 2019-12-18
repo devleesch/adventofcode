@@ -41,12 +41,6 @@ class ItemType(enum.Enum):
         elif item == '@':
             return ItemType.ME
 
-class Heading(enum.Enum):
-    UP = 0,
-    LEFT = 1
-    DOWN = 2
-    RIGHT = 3
-
 class Tunnel:
     def __init__(self, tiles, items):
         self.tiles = tiles
@@ -102,12 +96,30 @@ class Tunnel:
 
         return adjacents
 
-    def getChildren(self, start, visited):
+    def tree(self, start, visited):
         adjacents = self.getAdjacents(start)
         start.children = adjacents - visited
         visited |= start.children
         for c in start.children:
-            self.getChildren(c, visited)
+            self.tree(c, visited)
+
+    def findPaths(self, start, distance):
+        keys = set()
+        distance += 1
+        for child in start.children:
+            if child.itemType == ItemType.KEY:
+                keys.add(Path(child, distance))
+            elif child.itemType == ItemType.PASSAGE:
+                keys |= self.keyLeaf(child, distance)
+        return keys
+
+class Path:
+    def __init__(self, end, distance):
+        self.end = end
+        self.distance = distance
+
+    def __str__(self):
+        return "<end: {}; distance: {}>".format(self.end, self.distance)
 
 def parse(file):
     datas = [[None for x in range(len(file[0]))] for y in range(len(file))]
@@ -118,11 +130,15 @@ def parse(file):
     return datas
 
 def main():
-    datas = parse(file.read("2019/18/test2.txt"))
-    tunnel = Tunnel.parse(datas)
+    datas = parse(file.read("2019/18/test1.txt"))
 
+    tunnel = Tunnel.parse(datas)
     me = tunnel.items[ItemType.ME][0]
-    tunnel.getChildren(me, set([me]))
+    tunnel.tree(me, set([me]))
+    paths = tunnel.findPaths(me, 0)
+    for p in paths:
+        print(p)
+
     print("end")
 
 main()
