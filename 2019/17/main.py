@@ -1,6 +1,7 @@
 import sys
 sys.path.append('2019/lib')
 import file
+import enum
 
 class Computer:
     def __init__(self, datas):
@@ -75,6 +76,7 @@ class Operation:
         elif self.opcode == "02":
             datas[self.parameters[2]] = str(int(datas[self.parameters[0]]) * int(datas[self.parameters[1]]))
         elif self.opcode == "03":
+            print("input: {}", input)
             datas[self.parameters[0]] = input
         elif self.opcode == "04":
             output = int(datas[self.parameters[0]])
@@ -121,6 +123,127 @@ class Operation:
         elif opcode == "99":
             return 1
 
+class Position:
+    def __init__(self, x, y, value = None):
+        self.x = x
+        self.y = y
+        self.value = value
+
+class Direction(enum.Enum):
+    def __init__(self, v, goForward, goRight, goLeft):
+        self.v = v
+        self.goForward = goForward
+        self.goRight = goRight
+        self.goLeft = goLeft
+
+    UP = (0, lambda pos: Position(pos.x, pos.y - 1), lambda pos: Position(pos.x + 1, pos.y), lambda pos : Position(pos.x - 1, pos.y))
+    RIGHT = (1, lambda pos: Position(pos.x + 1, pos.y), lambda pos : Position(pos.x, pos.y + 1), lambda pos : Position(pos.x, pos.y - 1))
+    DOWN = (2, lambda pos: Position(pos.x, pos.y + 1), lambda pos : Position(pos.x - 1, pos.y), lambda pos : Position(pos.x + 1, pos.y))
+    LEFT = (3, lambda pos: Position(pos.x - 1, pos.y), lambda pos : Position(pos.x, pos.y - 1), lambda pos : Position(pos.x, pos.y + 1))
+
+    def moveForward(self, position):
+        return self.goForward(position)
+    
+    def moveRight(self, position):
+        return list(Direction)[(self.v+1) % 4], self.goRight(position)
+
+    def moveLeft(self, position):
+        return list(Direction)[(self.v+3) % 4], self.goLeft(position)
+
+class Board:
+    def __init__(self, points):
+        self.parse(points)
+    
+    def parse(self, points):
+        rows = 0
+        cols = 0
+        for p in points:
+            if p == 10:
+                rows += 1
+            if rows == 0:
+                cols += 1
+
+        self.positions = [[None for x in range(cols)] for y in range(rows-1)]
+
+        x = 0
+        y = 0
+        for p in points:
+            if not p == None:
+                if p == 10:
+                    y += 1
+                    x = 0
+                else:
+                    self.positions[y][x] = Position(x, y, chr(p))
+                    x += 1
+    
+    def display(self):
+        for row in self.positions:
+            for p in row:
+                print(p.value, end='')
+            print()
+
+    def getIntersections(self):
+        intersections = []
+        for row in self.positions:
+            for p in row:
+                intersect = self.isPath(p.x, p.y)
+                intersect &= self.isPath(p.x-1, p.y)
+                intersect &= self.isPath(p.x+1, p.y)
+                intersect &= self.isPath(p.x, p.y-1)
+                intersect &= self.isPath(p.x, p.y+1)
+                if intersect:
+                    intersections.append(p)
+        return intersections
+
+    def isPath(self, x, y):
+        if x >= 0 \
+            and x < len(self.positions[0]) \
+            and y >= 0 \
+            and y < len(self.positions):
+            return self.positions[y][x].value == '#'
+        else:
+            return False
+
+    def findPath(self):
+        start = None
+        for row in self.positions:
+            for p in row:
+                if p.value == '^':
+                    start = p
+
+        result = []
+        direction = Direction.UP
+        steps = 0
+        while True:
+            forward = direction.moveForward(start)
+            if self.isPath(forward.x, forward.y):
+                steps += 1
+                start = forward
+            else:
+                directionLeft, left = direction.moveLeft(start)
+                if self.isPath(left.x, left.y):
+                    result.append(steps)
+                    result.append('L')
+                    steps = 0
+                    direction = directionLeft
+                    start = left
+                else:
+                    directionRight, right = direction.moveRight(start)
+                    if self.isPath(right.x, right.y):
+                        result.append(steps)
+                        result.append('R')
+                        steps = 0
+                        direction = directionRight
+                        start = right
+                    else:
+                        result.append(steps)
+                        break
+        return result
+
+    @staticmethod
+    def computeAlignment(p):
+        return p.x * p.y
+
 def main():
     datas = [0]*10000
     i = 0
@@ -129,9 +252,47 @@ def main():
         i += 1
 
     computer = Computer(datas)
-    board = [[]]
+    points = []
     while not computer.interupt == 99:
         _, output = computer.run()
-        print(chr(output), end='')
+        points.append(output)
+    
+    board = Board(points)
+    board.display()
+    intersections = board.getIntersections()
 
-main()
+    sum = 0
+    for i in intersections:
+        sum += Board.computeAlignment(i)
+    print(sum)
+
+    print(board.findPath())
+
+def main2():
+    datas = [0]*10000
+    i = 0
+    for d in file.read("2019/17/input.txt")[0].split(','):
+        datas[i] = d
+        i += 1
+
+    datas[0] = '2'
+    computer = Computer(datas)
+    inputs = list("A,B,B,A,C,A,A,C,B,C\n")
+    inputs += list("R,8,L,12,R,8\n")
+    inputs += list("R,12,L,8,R,10\n")
+    inputs += list("R,8,L,8,L,8,R,8,R,10\n")
+    inputs += list("n\n")
+
+    result = None
+    while not computer.interupt == 99:
+        interup, output = computer.run()
+        if interup == 3:
+            computer.setInput(ord(inputs.pop(0)))
+        elif interup == 4:            
+            print(chr(output), end='')
+            result = output
+
+    print("output: {}".format(str(result)))
+    print("end")
+
+main2()
