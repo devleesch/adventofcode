@@ -12,10 +12,11 @@ class Position:
         return "<x: {}, y: {}>".format(self.x, self.y)
 
 class Tile:
-    def __init__(self, position, itemType, value = None):
+    def __init__(self, position, itemType, value = None, children = []):
         self.position = position
         self.itemType = itemType
         self.value = value
+        self.children = children
     
     def __str__(self):
         return "<position: {}; itemType: {}; value: {}>".format(self.position, self.itemType, self.value)
@@ -69,9 +70,44 @@ class Tunnel:
                 tiles[y][x] = tile
         return Tunnel(tiles, items)
     
-    def findKeys(self):
-        me = self.items[ItemType.ME][0]
-        
+    def getPath(self, x, y):
+        if x >= 0 \
+            and x <= len(self.tiles[0]) - 1 \
+            and y >= 0 \
+            and y <= len(self.tiles) - 1 \
+            and not self.tiles[y][x].itemType == ItemType.WALL:
+                return self.tiles[y][x]
+        return None
+
+    def getAdjacents(self, start):
+        adjacents = set()
+        position = start.position
+
+        # left
+        left = self.getPath(position.x - 1, position.y)
+        if not left == None:
+            adjacents.add(left)
+        # right
+        right = self.getPath(position.x + 1, position.y)
+        if not right == None:
+            adjacents.add(right)
+        # top
+        top = self.getPath(position.x, position.y - 1)
+        if not top == None:
+            adjacents.add(top)
+        # down
+        down = self.getPath(position.x, position.y + 1)
+        if not down == None:
+            adjacents.add(down)
+
+        return adjacents
+
+    def getChildren(self, start, visited):
+        adjacents = self.getAdjacents(start)
+        start.children = adjacents - visited
+        visited |= start.children
+        for c in start.children:
+            self.getChildren(c, visited)
 
 def parse(file):
     datas = [[None for x in range(len(file[0]))] for y in range(len(file))]
@@ -82,8 +118,11 @@ def parse(file):
     return datas
 
 def main():
-    datas = parse(file.read("2019/18/input.txt"))
+    datas = parse(file.read("2019/18/test2.txt"))
     tunnel = Tunnel.parse(datas)
-    tunnel.findKeys()
+
+    me = tunnel.items[ItemType.ME][0]
+    tunnel.getChildren(me, set([me]))
+    print("end")
 
 main()
