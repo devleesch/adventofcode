@@ -111,12 +111,7 @@ class Tunnel:
                 keys.add(Path(child, distance))
             elif child.itemType == ItemType.PASSAGE:
                 keys |= self.leafKeys(child, distance)
-        return keys
-
-    def findPaths(self):
-        me = self.items[ItemType.ME][0]
-        self.tree(me, set([me]))
-        return self.leafKeys(me, 0)
+        return keys        
 
 class Path:
     def __init__(self, end, distance):
@@ -134,12 +129,16 @@ def parse(file):
         y += 1
     return datas
 
+def findPaths(tunnel: Tunnel):
+    me = tunnel.items[ItemType.ME][0]
+    tunnel.tree(me, set([me]))
+    return tunnel.leafKeys(me, 0)
+
 def main():
     datas = parse(file.read("2019/18/test1.txt"))
 
     tunnel = Tunnel.parse(datas)
-    paths = tunnel.findPaths()
-    for p in paths:
+    for p in findPaths(tunnel):
         print(p)
 
     print("end")
