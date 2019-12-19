@@ -103,20 +103,22 @@ class Tunnel:
         for c in start.children:
             self.tree(c, visited)
 
-    def leafKeys(self, start, distance):
+    def leafKeys(self, root, start, distance):
         keys = set()
         distance += 1
         for child in start.children:
             if child.itemType == ItemType.KEY:
-                keys.add(Path(child, distance))
+                keys.add(Path(root, child, distance))
             elif child.itemType == ItemType.PASSAGE:
-                keys |= self.leafKeys(child, distance)
-        return keys        
+                keys |= self.leafKeys(root, child, distance)
+        return keys
 
 class Path:
-    def __init__(self, end, distance):
+    def __init__(self, start, end, distance, children = set()):
+        self.start = start
         self.end = end
         self.distance = distance
+        self.children = children
 
     def __str__(self):
         return "<end: {}; distance: {}>".format(self.end, self.distance)
@@ -129,17 +131,25 @@ def parse(file):
         y += 1
     return datas
 
-def findPaths(tunnel: Tunnel):
+def findPaths(datas):
+    tunnel = Tunnel.parse(datas)
     me = tunnel.items[ItemType.ME][0]
     tunnel.tree(me, set([me]))
-    return tunnel.leafKeys(me, 0)
+    return tunnel.leafKeys(me, me, 0)
 
 def main():
     datas = parse(file.read("2019/18/test1.txt"))
 
-    tunnel = Tunnel.parse(datas)
-    for p in findPaths(tunnel):
-        print(p)
+    paths = findPaths(datas)
+    for p in paths:
+        newDatas = datas.copy()
+        newDatas[p.end.position.y][p.end.position.x] = '@'
+        newDatas[p.start.position.y][p.start.position.x] = '.'
+        for y in range(len(newDatas)):
+            for x in range(len(newDatas[y])):
+                if newDatas[y][x] == p.end.value.upper():
+                    newDatas[y][x] = '.'
+        p.children = findPaths(newDatas)
 
     print("end")
 
