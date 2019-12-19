@@ -138,7 +138,7 @@ def findPaths(datas):
     return tunnel.leafKeys(me, me, 0)
 
 def main():
-    datas = parse(file.read("2019/18/test1.txt"))
+    datas = parse(file.read("2019/18/test2.txt"))
 
     paths = findPaths(datas)
     for p in paths:

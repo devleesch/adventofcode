@@ -1,7 +1,7 @@
 import sys
 sys.path.append('2019/lib')
 import file
-import enum
+import math
 
 class Computer:
     def __init__(self, datas):
@@ -119,21 +119,18 @@ class Operation:
         elif opcode == "99":
             return 1
 
-def main():
-    datas = [0]*500
-    i = 0
-    for d in file.read("2019/19/input.txt")[0].split(','):
-        datas[i] = d
-        i += 1
-    
-    picture = [[None for x in range(50)] for y in range(50)]
+def getBeamAt(datas, x, y):
+    computer = Computer(list(datas))
+    computer.pointer = 0
+    computer.inputs = [x, y]
+    return computer.run()
+
+def generatePicture(datas, startX, startY, endX, endY):
+    picture = [[None for x in range(endX - startX)] for y in range(endY - startY)]
 
     for y in range(len(picture)):
         for x in range(len(picture[y])):
-            computer = Computer(list(datas))
-            computer.pointer = 0
-            computer.inputs = [x, y]
-            _, picture[y][x] = computer.run()
+            _, picture[y][x] = getBeamAt(datas, startX + x, startY + y)
     
     count = 0
     for row in picture:
@@ -145,5 +142,55 @@ def main():
             print(display, end='')
         print()
     print("count: {}".format(count))
+
+def findSpace(datas, coords):
+    while len(coords) > 0:
+        x = coords.pop(0)
+        y = coords.pop(0)
+        print("{}, {} => {}".format(x, y, getBeamAt(datas, x, y)))
+
+def part2(datas):
+    x = 1000
+    y = 800
+
+    sizeX = 100
+    sizeY = 100
+
+    while True:
+        _, beam = getBeamAt(datas, x, y)
+        while beam == 0:
+            y += 1
+            _, beam = getBeamAt(datas, x, y)
+        
+        _, inBeam = getBeamAt(datas, x - sizeX + 1, y + sizeY - 1)
+        if inBeam == 1:
+            print(x - sizeX + 1, y)
+            break
+
+        if x % 100 == 0:
+            print(x)
+        x += 1
+
+def main():
+    datas = [0]*500
+    i = 0
+    for d in file.read("2019/19/input.txt")[0].split(','):
+        datas[i] = d
+        i += 1
+
+    #generatePicture(datas, 0, 0, 50, 50)
+    coords = [
+        1000, 811,
+        1000, 925,
+
+        973, 900,
+        1110, 900,
+
+        162, 132,
+        154, 132,
+        154, 142
+    ]
+    #findSpace(datas, coords)
+    part2(datas)
 
 main()
