@@ -1,13 +1,15 @@
 import sys
 sys.path.append('2019/lib')
 import file
+import enum
+import random
 
 class Computer:
     def __init__(self, datas):
         self.datas = datas
         self.pointer = 0
         self.relative = 0
-        self.inputs = None
+        self.inputs = []
         self.output = None
         self.interupt = None
 
@@ -119,20 +121,33 @@ class Operation:
             return 1
 
 class Tile(enum.Enum):
-    WALL = 0
-    PATH = 1
-    OXYGEN = 2
+    def __init__(self, code, display):
+        self.code = code
+        self.display = display
+
+    @staticmethod
+    def of(code):
+        if code == 0:
+            return Tile.WALL
+        elif code == 1:
+            return Tile.PATH
+        elif code == 2:
+            return Tile.OXYGEN
+
+    WALL = (0, '#')
+    PATH = (1, '.')
+    OXYGEN = (2, '0')
 
 class Heading(enum.Enum):
-    def __init__(self, value, moveForward, turnRight):
-        self.value = value
+    def __init__(self, code, moveForward, turnRight):
+        self.code = code
         self.moveForward = moveForward
         self.turnRight = turnRight
     
-    UP = 0, lambda position: position.y -= 1, lambda Heading.RIGHT
-    RIGHT = 1, lambda position: position.x += 1, lambda Heading.DOWN
-    DOWN = 2, lambda position: position.y += 1, lambda Heading.LEFT
-    LEFT = 3
+    NORTH = ('1', lambda position: Position(position.x, position.y - 1), lambda: Heading.EAST)
+    EAST = ('4', lambda position: Position(position.x + 1, position.y), lambda: Heading.SOUTH)
+    SOUTH = ('2', lambda position: Position(position.x, position.y + 1), lambda: Heading.WEST)
+    WEST = ('3', lambda position: Position(position.x - 1, position.y), lambda: Heading.NORTH)
 
 class Position:
     def __init__(self, x, y):
@@ -148,20 +163,41 @@ class Robot:
         self.position = position
         self.heading = heading
 
-    def moveForward(self):
+    def move(self):
+        return self.heading.moveForward(self.position)
 
 
 class Maze:
     def __init__(self, size):
         self.tiles = [[None for x in range(size)] for y in range(size)]
 
+    def __str__(self):
+        string = ""
+        for row in self.tiles:
+            for t in row:
+                string += t.display if t != None else ' '
+            string += '\n'
+        return string
+
 def main():
     intCode = file.read("2019/15/input.txt")[0].split(',')
     computer = Computer(intCode)
 
-    robot = Robot(Position(50, 50), Heading.UP)
-    maze = Maze(100)
-    while(maze[robot.position.y][robot.position.x] != Tile.OXYGEN):
+    size = 50
+    robot = Robot(Position(round(size / 2), round(size / 2)), Heading.NORTH)
+    maze = Maze(size)
+    while(maze.tiles[robot.position.y][robot.position.x] != Tile.OXYGEN):
+        newPosition = robot.move()
+        computer.inputs.append(robot.heading.code)
+        _, output = computer.run()
 
+        tile = Tile.of(output)
+        maze.tiles[newPosition.y][newPosition.x] = tile
+
+        if tile != Tile.WALL:
+            robot.position = newPosition
+
+        print(maze)
+        
 
 main()
