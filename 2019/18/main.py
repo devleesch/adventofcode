@@ -113,8 +113,6 @@ class Tunnel:
                 keys |= self.leafKeys(root, child, distance)
         return keys
 
-    
-
 class Path:
     def __init__(self, start, end, distance, children = set()):
         self.start = start
@@ -139,12 +137,28 @@ def findPaths(datas):
     tunnel.tree(me, set([me]))
     return tunnel.leafKeys(me, me, 0)
 
+def generate(generations, possibilities):
+    for p in possibilities:
+        for i in range(len(generations)):
+            generations[i] += p
+    return generations
+
 def main():
-    datas = parse(file.read("2019/18/test1.txt"))
+    datas = parse(file.read("2019/18/test3.txt"))
 
     tunnel = Tunnel.parse(datas)
     me = tunnel.items[ItemType.ME][0]
     tunnel.tree(me, set([me]))
+
+    possibilities = set()
+    for k in tunnel.items[ItemType.KEY]:
+        possibilities.add(k.value)
+
+    possibilities = set(['a', 'b'])
+    print(possibilities)
+    for i in range(1):
+        possibilities = generate(possibilities, possibilities)
+        print(possibilities)
 
     print("end")
 
