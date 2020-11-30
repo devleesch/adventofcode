@@ -19,4 +19,3 @@ mod.run(lines)
 end = time.monotonic()
 
 helper.elapsed(end - start)
-helper.elapsed(65.9079785)
