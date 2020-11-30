@@ -171,13 +171,15 @@ class Maze:
     def __init__(self, size):
         self.tiles = [[None for x in range(size)] for y in range(size)]
 
-    def __str__(self):
-        string = ""
-        for row in self.tiles:
-            for t in row:
-                string += t.display if t != None else ' '
-            string += '\n'
-        return string
+    def display(self, robot):
+        for y in range(len(self.tiles)):
+            for x in range(len(self.tiles)):
+                if robot.position.x == x and robot.position.y == y:
+                    print('X', end='')
+                else:
+                    t = self.tiles[y][x]
+                    print(t.display if t != None else ' ', end='')
+            print()
 
 def main():
     intCode = file.read("2019/15/input.txt")[0].split(',')
@@ -187,7 +189,14 @@ def main():
     robot = Robot(Position(round(size / 2), round(size / 2)), Heading.NORTH)
     maze = Maze(size)
     while(maze.tiles[robot.position.y][robot.position.x] != Tile.OXYGEN):
+    #while(True):
         newPosition = robot.move()
+        i = 0
+        while maze.tiles[newPosition.y][newPosition.x] != None and i < random.randint(0, 4):
+            robot.heading = robot.heading.turnRight()
+            newPosition = robot.move()
+            i += 1
+
         computer.inputs.append(robot.heading.code)
         _, output = computer.run()
 
@@ -197,7 +206,9 @@ def main():
         if tile != Tile.WALL:
             robot.position = newPosition
 
-        print(maze)
+        #maze.display(robot)
+
+    maze.display(robot)
         
 
 main()
