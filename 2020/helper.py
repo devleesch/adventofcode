@@ -1,5 +1,4 @@
 import typing
-import math
 
 
 MINUTE = 60
