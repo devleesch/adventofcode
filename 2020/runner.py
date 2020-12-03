@@ -4,8 +4,8 @@ import time
 
 from helper import elapsed
 
-day = 2
-solver = 'solver2'
+day = 3
+solver = 'solver'
 file = 'a.txt'
 
 # start time to track execution time
