@@ -15,7 +15,7 @@ start = time.monotonic()
 mod = importlib.import_module(f'{day:02d}.{solver}')
 # read input of the file
 lines = helper.readlines(f'{day:02d}/{file}')
-# run module solver with input file line by line 
+# run module solver with input file line by line
 mod.run(lines)
 
 # end time to compute elapsed time
