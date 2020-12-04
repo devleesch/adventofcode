@@ -88,14 +88,17 @@ class Document:
             document.__dict__[key] = value
         return document
 
+HCL = [c for c in "0123456789abcdef"]
+ECL = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
+PID = [c for c in "0123456789"]
 VALIDATORS = {
     'byr': lambda v: Document.is_valid_int(v, 1920, 2002),
     'iyr': lambda v: Document.is_valid_int(v, 2010, 2020),
     'eyr': lambda v: Document.is_valid_int(v, 2020, 2030),
     'hgt': lambda v: Document.is_valid_hgt(v),
-    'hcl': lambda v: Document.is_valid_hcl(v, [c for c in "0123456789abcdef"]),
-    'ecl': lambda v: Document.is_valid_ecl(v, ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']),
-    'pid': lambda v: Document.is_valid_pid(v, [c for c in "0123456789"])
+    'hcl': lambda v: Document.is_valid_hcl(v, HCL),
+    'ecl': lambda v: Document.is_valid_ecl(v, ECL),
+    'pid': lambda v: Document.is_valid_pid(v, PID)
 }
 
 def run(lines: typing.List[str]):
