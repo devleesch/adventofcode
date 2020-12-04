@@ -3,9 +3,6 @@ import unittest
 
 
 class Document:
-    PID = [c for c in "0123456789"]
-    HCL = [c for c in "0123456789abcdef"]
-
     def __init__(self) -> None:
         self.byr = None #(Birth Year)
         self.iyr = None #(Issue Year)
@@ -21,14 +18,7 @@ class Document:
         for (key, value) in self.__dict__.items():
             if key in VALIDATORS:
                 validator = VALIDATORS[key]
-                if validator["method"] == Document.is_valid_int:
-                    valid &= validator["method"](value, validator["min"], validator["max"])
-                elif validator["method"] == Document.is_valid_hgt:
-                    valid &= validator["method"](value)
-                elif validator["method"] == Document.is_valid_ecl:
-                    valid &= validator["method"](value, validator["colors"])
-                else:
-                    valid &= validator["method"](value)
+                valid &= validator(value)
         return valid
 
     @staticmethod
@@ -56,7 +46,7 @@ class Document:
             return False
         
     @staticmethod
-    def is_valid_hcl(value):
+    def is_valid_hcl(value, hcl):
         if value is None:
             return False
 
@@ -66,7 +56,7 @@ class Document:
         for i in range(len(value)):
             if i == 0 and value[i] != '#':
                 return False
-            elif i != 0 and not value[i] in Document.HCL:
+            elif i != 0 and not value[i] in hcl:
                 return False
         return True
 
@@ -75,7 +65,7 @@ class Document:
         return value in colors
 
     @staticmethod
-    def is_valid_pid(value):
+    def is_valid_pid(value, pid):
         if value is None:
             return False
 
@@ -83,7 +73,7 @@ class Document:
             return False
         
         for c in value:
-            if not c in Document.PID:
+            if not c in pid:
                 return False
 
         return True
@@ -99,34 +89,13 @@ class Document:
         return document
 
 VALIDATORS = {
-    'byr': {
-        'method': Document.is_valid_int,
-        'min': 1920,
-        'max': 2002
-    },
-    'iyr': {
-        'method': Document.is_valid_int,
-        'min': 2010,
-        'max': 2020
-    },
-    'eyr': {
-        'method': Document.is_valid_int,
-        'min': 2020,
-        'max': 2030
-    },
-    'hgt': {
-        'method': Document.is_valid_hgt
-    },
-    'hcl': {
-        'method': Document.is_valid_hcl
-    },
-    'ecl': {
-        'method': Document.is_valid_ecl,
-        'colors': ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
-    },
-    'pid': {
-        'method': Document.is_valid_pid
-    }
+    'byr': lambda v: Document.is_valid_int(v, 1920, 2002),
+    'iyr': lambda v: Document.is_valid_int(v, 2010, 2020),
+    'eyr': lambda v: Document.is_valid_int(v, 2020, 2030),
+    'hgt': lambda v: Document.is_valid_hgt(v),
+    'hcl': lambda v: Document.is_valid_hcl(v, [c for c in "0123456789abcdef"]),
+    'ecl': lambda v: Document.is_valid_ecl(v, ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']),
+    'pid': lambda v: Document.is_valid_pid(v, [c for c in "0123456789"])
 }
 
 def run(lines: typing.List[str]):
@@ -160,19 +129,22 @@ class Test(unittest.TestCase):
         self.assertFalse(Document.is_valid_hgt("190"))
 
     def test_hcl(self):
-        self.assertTrue(Document.is_valid_hcl("#123abc"))
-        self.assertFalse(Document.is_valid_hcl("#123abz"))
-        self.assertFalse(Document.is_valid_hcl("123abc"))
-        self.assertFalse(Document.is_valid_hcl("1123abc"))
-        self.assertFalse(Document.is_valid_hcl("#1123abc1"))
+        hcl = [c for c in "0123456789abcdef"]
+        self.assertTrue(Document.is_valid_hcl("#123abc", hcl))
+        self.assertFalse(Document.is_valid_hcl("#123abz", hcl))
+        self.assertFalse(Document.is_valid_hcl("123abc", hcl))
+        self.assertFalse(Document.is_valid_hcl("1123abc", hcl))
+        self.assertFalse(Document.is_valid_hcl("#1123abc1", hcl))
 
     def test_ecl(self):
-        self.assertTrue(Document.is_valid_ecl("brn", VALIDATORS["ecl"]["colors"]))
-        self.assertFalse(Document.is_valid_ecl("wat", VALIDATORS["ecl"]["colors"]))
+        ecl = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
+        self.assertTrue(Document.is_valid_ecl("brn", ecl))
+        self.assertFalse(Document.is_valid_ecl("wat", ecl))
 
     def test_pid(self):
-        self.assertTrue(Document.is_valid_pid("012345678"))
-        self.assertFalse(Document.is_valid_pid("0123456789"))
+        pid = [c for c in "0123456789"]
+        self.assertTrue(Document.is_valid_pid("012345678", pid))
+        self.assertFalse(Document.is_valid_pid("0123456789", pid))
 
 if __name__ == '__main__':
     unittest.main()
