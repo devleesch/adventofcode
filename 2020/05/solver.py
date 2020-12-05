@@ -27,7 +27,7 @@ def run(lines: typing.List[str]):
         if v > max:
             max = v
     print(max)
-    for i in range(max):
+    for i in range(max) :
         if seats[i] == 0:
             print(i)
 
