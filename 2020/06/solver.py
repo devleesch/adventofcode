@@ -16,7 +16,6 @@ def run(lines: typing.List[str]):
             answer[ord(c)-ord('a')] = 1
         for i in range(len(group_answers)):
             group_answers[i] &= answer[i]
-        
             
     result += sum(group_answers)
     print(result)
