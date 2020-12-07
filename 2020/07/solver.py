@@ -4,8 +4,9 @@ from typing import Container
 
 
 class Bag:
-    def __init__(self, color) -> None:
+    def __init__(self, color, number = None) -> None:
         self.color = color
+        self.number = number
         self.contains = None
     
     def __eq__(self, o: object) -> bool:
@@ -23,7 +24,7 @@ class Bag:
         bag = Bag(matches.group('color'))
         bag.contains = []
         for b in re.findall("(?P<number>\d) (?P<color>.+?) bags?", matches.group('bags')):
-            bag.contains.append(Bag(b[1]))
+            bag.contains.append(Bag(b[1], b[0]))
         return bag
 
 def run(lines: typing.List[str]):
@@ -31,13 +32,13 @@ def run(lines: typing.List[str]):
     for l in lines:
         bags.append(Bag.parse(l))
     
-    count = deep_search(Bag("shiny gold"), bags)
-    print(count)
+    founds = reverse_search(Bag("shiny gold"), bags, [])
+    print(len(founds))
 
-def deep_search(search, bags):
-    count = 0
+def reverse_search(search, bags, founds):
     for b in bags:
         if search in b.contains:
-            count += 1
-            count += deep_search(b, bags)
-    return count
+            if not b in founds:
+                founds.append(b)
+            reverse_search(b, bags, founds)
+    return founds
