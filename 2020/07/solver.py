@@ -37,7 +37,7 @@ def run(lines: typing.List[str]):
     
     founds = reverse_search(Bag("shiny gold"), bags, [])
     print("a={}".format(len(founds)))
-    print("b={}".format(deep_search(Bag("shiny gold"), bags) - 1)) # -1 because shiny gold bag doesn't count
+    print("b={}".format(deep_search(Bag("shiny gold"), bags) - 1)) # -1 because "shiny gold" bag doesn't count
 
 def reverse_search(search, bags, founds):
     for b in bags:
