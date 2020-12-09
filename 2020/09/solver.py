@@ -39,7 +39,7 @@ def run(lines: typing.List[str]):
             k -= 1
 
         if sum == error_value:
-            k = k+1
+            k += 1
             min = sys.maxsize
             max = -1
             print(k, j+1)
