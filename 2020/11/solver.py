@@ -10,10 +10,10 @@ class Plane:
         for line in self.lines:
             for seat in line:
                 if seat:
-                    occupied = list(filter(lambda s: s.occupied, seat.adjacents(self)))
+                    occupied = list(filter(lambda s: s.occupied, seat.visibles(self)))
                     if not seat.occupied and len(occupied) == 0:
                         changes.append(seat)
-                    elif seat.occupied and len(occupied) >= 4:
+                    elif seat.occupied and len(occupied) >= 5:
                         changes.append(seat)
         return changes
 
@@ -51,6 +51,20 @@ class Seat:
                             adjacents.append(plane.lines[ry][rx])
         return adjacents
 
+    def visibles(self, plane):
+        visibles = []
+        for y in range(-1, 2):
+            for x in range(-1, 2):
+                for z in range(1, len(plane.lines)):
+                    if x != 0 or y != 0:
+                        ry = self.y + y * z
+                        rx = self.x + x * z
+                        if ry >= 0 and ry < len(plane.lines) and rx >= 0 and rx < len(plane.lines[0]):
+                            if plane.lines[ry][rx]:
+                                visibles.append(plane.lines[ry][rx])
+                                break
+        return visibles
+
     def __str__(self) -> str:
         return f"[{self.x}, {self.y}] -> {self.occupied}"
 
@@ -78,7 +92,7 @@ def run(lines: typing.List[str]):
     changes = plane.play()
     while(len(changes)):
         plane.apply(changes)
-        #print(plane)
+        print(plane)
         changes = plane.play()
 
     nb_occupied = 0
