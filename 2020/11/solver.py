@@ -5,15 +5,15 @@ class Plane:
     def __init__(self) -> None:
         self.lines = []
 
-    def play(self):
+    def play(self, occupied_fn, limit):
         changes = []
         for line in self.lines:
             for seat in line:
                 if seat:
-                    occupied = list(filter(lambda s: s.occupied, seat.visibles(self)))
+                    occupied = list(filter(lambda s: s.occupied, occupied_fn(seat, self)))
                     if not seat.occupied and len(occupied) == 0:
                         changes.append(seat)
-                    elif seat.occupied and len(occupied) >= 5:
+                    elif seat.occupied and len(occupied) >= limit:
                         changes.append(seat)
         return changes
 
@@ -89,11 +89,13 @@ def run(lines: typing.List[str]):
         plane.lines.append(seats)
         y += 1
     
-    changes = plane.play()
+    limit = 4
+    occupied_fn = Seat.adjacents
+    changes = plane.play(occupied_fn, limit)
     while(len(changes)):
         plane.apply(changes)
-        print(plane)
-        changes = plane.play()
+        #print(plane)
+        changes = plane.play(occupied_fn, limit)
 
     nb_occupied = 0
     for line in plane.lines:
