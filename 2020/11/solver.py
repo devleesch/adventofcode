@@ -89,8 +89,8 @@ def run(lines: typing.List[str]):
         plane.lines.append(seats)
         y += 1
     
-    limit = 4
-    occupied_fn = Seat.adjacents
+    limit = 5
+    occupied_fn = Seat.visibles
     changes = plane.play(occupied_fn, limit)
     while(len(changes)):
         plane.apply(changes)
