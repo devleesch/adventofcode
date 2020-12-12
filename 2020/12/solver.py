@@ -3,17 +3,18 @@ from enum import Enum
 
 
 class Ship:
-    def __init__(self, x, y, heading) -> None:
-        self.x = x
-        self.y = y
+    def __init__(self, heading, waypoint) -> None:
+        self.x = 0
+        self.y = 0
         self.heading = heading
+        self.waypoint = waypoint
 
     def move(self, move, value):
-        (self.x, self.y, self.heading) = move.apply(self, value)
+        move.apply(self, value)
         print(f"{move} -> {self}")
 
     def __str__(self) -> str:
-        return f"{self.x}, {self.y}, {self.heading}"
+        return f"[{self.x}, {self.y}], {self.heading}, {self.waypoint}"
 
 class Move(Enum):
     def __init__(self, type, apply) -> None:
@@ -21,16 +22,41 @@ class Move(Enum):
         self.apply = apply
 
     @staticmethod
+    def north(ship, value):
+        ship.waypoint.y += value
+
+    @staticmethod
+    def south(ship, value):
+        ship.waypoint.y -= value
+    
+    @staticmethod
+    def west(ship, value):
+        ship.waypoint.x -= value
+    
+    @staticmethod
+    def east(ship, value):
+        ship.waypoint.x += value
+
+    @staticmethod
+    def forward(ship, value):
+        ship.x += ship.waypoint.x * value
+        ship.y += ship.waypoint.y * value
+
+    @staticmethod
     def left(ship, value):
         for i in range(value // 90):
             ship.heading = ship.heading.left()
-        return ship.heading
+            temp = ship.waypoint.x
+            ship.waypoint.x = -ship.waypoint.y
+            ship.waypoint.y = temp
 
     @staticmethod
     def right(ship, value):
         for i in range(value // 90):
             ship.heading = ship.heading.right()
-        return ship.heading
+            temp = ship.waypoint.x
+            ship.waypoint.x = ship.waypoint.y
+            ship.waypoint.y = -temp
 
     @staticmethod
     def of(type):
@@ -38,13 +64,13 @@ class Move(Enum):
             if t.type == type:
                 return t
 
-    NORTH = ('N', lambda ship, distance: (ship.x, ship.y + distance, ship.heading))
-    SOUTH = ('S', lambda ship, distance: (ship.x, ship.y - distance, ship.heading))
-    WEST = ('W', lambda ship, distance: (ship.x - distance, ship.y, ship.heading))
-    EAST = ('E', lambda ship, distance: (ship.x + distance, ship.y, ship.heading))
-    FORWARD = ('F', lambda ship, distance: (*ship.heading.forward(ship, distance), ship.heading))
-    LEFT = ('L', lambda ship, value: (ship.x, ship.y, Move.left(ship, value)))
-    RIGHT = ('R', lambda ship, value: (ship.x, ship.y, Move.right(ship, value)))
+    NORTH = ('N', lambda ship, distance: Move.north(ship, distance))
+    SOUTH = ('S', lambda ship, distance: Move.south(ship, distance))
+    WEST = ('W', lambda ship, distance: Move.west(ship, distance))
+    EAST = ('E', lambda ship, distance: Move.east(ship, distance))
+    FORWARD = ('F', lambda ship, distance: Move.forward(ship, distance))
+    LEFT = ('L', lambda ship, deg: Move.left(ship, deg))
+    RIGHT = ('R', lambda ship, deg: Move.right(ship, deg))
 
 
 class Heading(Enum):
@@ -55,12 +81,21 @@ class Heading(Enum):
 
     NORTH = (lambda ship, distance: (ship.x, ship.y + distance), lambda: Heading.WEST, lambda: Heading.EAST)
     SOUTH = (lambda ship, distance: (ship.x, ship.y - distance), lambda: Heading.EAST, lambda: Heading.WEST)
-    WEST = (lambda ship, distance: (ship.x - distance, ship.y), lambda: Heading.SOUTH, lambda: Heading.NORTH)
+    WEST = (lambda ship, distance: (ship.x - distance, ship.y), lambda: Heading.SOUTH, lambda: (Heading.NORTH))
     EAST = (lambda ship, distance: (ship.x + distance, ship.y), lambda: Heading.NORTH, lambda: Heading.SOUTH)
 
 
+class Waypoint:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __str__(self) -> str:
+        return f"[{self.x}, {self.y}]"
+
+
 def run(lines: typing.List[str]):
-    ship = Ship(0, 0, Heading.EAST)
+    ship = Ship(Heading.EAST, Waypoint(10, 1))
     for l in lines:
         ship.move(Move.of(l[0]), int(l[1:]))
     print(f"distance = {abs(ship.x) + abs(ship.y)}")
