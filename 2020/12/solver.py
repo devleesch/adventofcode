@@ -44,16 +44,16 @@ class Move(Enum):
 
     @staticmethod
     def left(ship, value):
-        for i in range(value // 90):
-            ship.heading = ship.heading.left()
+        for _ in range(value // 90):
+            #ship.heading = ship.heading.left()
             temp = ship.waypoint.x
             ship.waypoint.x = -ship.waypoint.y
             ship.waypoint.y = temp
 
     @staticmethod
     def right(ship, value):
-        for i in range(value // 90):
-            ship.heading = ship.heading.right()
+        for _ in range(value // 90):
+            #ship.heading = ship.heading.right()
             temp = ship.waypoint.x
             ship.waypoint.x = ship.waypoint.y
             ship.waypoint.y = -temp
