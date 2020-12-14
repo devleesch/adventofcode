@@ -14,12 +14,22 @@ def run(lines: typing.List[str]):
         print(mask, address, value)
         if address:
             memory[address] = apply(mask, to_bin(value))
-    print(memory)
-
-
-def apply(mask, bin):
-    result = []
     
+    sum = 0
+    for _, value in memory.items():
+        sum += value
+    print(sum)
+
+
+def apply(mask, binary):
+    result = [0 for _ in range(36)]
+    for i in range(36):
+        if mask[i] == '1':
+            result[i] = 1
+        elif mask[i] == '0':
+            result[i] = 0
+        else:
+            result[i] = int(binary[i])
     return to_int(result)
 
 
@@ -61,7 +71,7 @@ def decode(line: str, mask):
         if match:
             i = 0
             for c in match.group(1):
-                mask[i] = c
+                mask[35 - i] = c
                 i += 1
             #print(line, mask)
             return mask, None, None
