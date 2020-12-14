@@ -57,12 +57,6 @@ def part2(lines: typing.List[str]):
 
     print(t_align - t)
 
-    # step = ppcm([ids[0], ids[2]])
-    # for t in range(102, sys.maxsize, step):
-    #     if t != 0 and t % ids[0] == 0 and t % ids[2] == 11 and t % ids[3] == 16:
-    #         print(t)
-    #         break
-
 def part1(lines: typing.List[str]):
     min_timestamp = int(lines[0])
     ids = []
