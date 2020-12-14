@@ -37,14 +37,31 @@ def part2(lines: typing.List[str]):
     print(ids)
 
     t_align = ppcm(list(ids.values()))
-    print(t_align)
+    #print(t_align)
 
-    print(ids[2])
-    for t in range(0, sys.maxsize, ids[2]):
-        if t != 0 and t % ids[0] == 0 and t % ids[2] == 0:
-            print(t)
-            break
+    t = 0
+    for i in range(1, len(ids)):
+        l = list(ids.values())[0:i]
+        step = ppcm(l)
+        for t in range(t, sys.maxsize, step):
+            valid = True
+            for j in range(i+1):
+                ix, id = list(ids.items())[j]
+                if t == 0 or t % id != ix % id:
+                    valid = False
+                    break
 
+            if valid:
+                print(t)
+                break
+
+    print(t_align - t)
+
+    # step = ppcm([ids[0], ids[2]])
+    # for t in range(102, sys.maxsize, step):
+    #     if t != 0 and t % ids[0] == 0 and t % ids[2] == 11 and t % ids[3] == 16:
+    #         print(t)
+    #         break
 
 def part1(lines: typing.List[str]):
     min_timestamp = int(lines[0])
