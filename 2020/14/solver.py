@@ -10,35 +10,52 @@ def run(lines: typing.List[str]):
     mask = ['0' for i in range(36)]
     memory = {}
     for l in lines:
-        mask, address, value = decode(l, mask)
-        print(mask, address, value)
-        if address:
-            memory[address] = apply(mask, to_bin(value))
+        mask, addr, value = decode(l, mask)
+        if addr:
+            #memory[addr] = to_int(apply(mask, to_bin(value)))
+            #print(addr, mask)
+            for a in addresses(addr, mask):
+                memory[a] = value
     
     sum = 0
-    for _, value in memory.items():
+    for value in memory.values():
         sum += value
     print(sum)
 
 
 def apply(mask, binary):
-    result = [0 for _ in range(36)]
+    result = ['0' for _ in range(36)]
     for i in range(36):
         if mask[i] == '1':
-            result[i] = 1
+            result[i] = '1'
         elif mask[i] == '0':
-            result[i] = 0
+            result[i] = binary[i]
         else:
-            result[i] = int(binary[i])
-    return to_int(result)
+            result[i] = 'X'
+    return result
+
+
+def addresses(addr, mask):
+    addrs = []
+    addr_mask = apply(mask, to_bin(addr))
+    for i in range(pow(2, addr_mask.count('X'))):
+        a = addr_mask.copy()
+        i_bin = to_bin(i)
+        ix = 0
+        for i in range(36):
+            if a[i] == 'X':
+                a[i] = i_bin[ix]
+                ix += 1
+        addrs.append(to_int(a))
+    return addrs
 
 
 def to_bin(value):
     i = 0
-    binary = [0 for i in range(36)]
+    binary = ['0' for i in range(36)]
     while(value > 0):
         bit = value % 2
-        binary[i] = bit
+        binary[i] = str(bit)
         i += 1
         value //= 2
     return binary
@@ -48,6 +65,7 @@ def to_int(binary):
     v = 0
     i = 0
     for b in binary:
+        b = int(b)
         if b:
             v += pow(2, i)
         i += 1
