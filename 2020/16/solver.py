@@ -1,7 +1,7 @@
 import typing
 import re
 import unittest
-
+import itertools
 
 class Range:
     def __init__(self, start, end) -> None:
@@ -25,6 +25,15 @@ class Rule:
                 return True
         return False
 
+    def __eq__(self, o: object) -> bool:
+        return o != None and self.name == o.name
+
+    def __str__(self) -> str:
+        return f"{self.name}"
+
+    def __repr__(self) -> str:
+        return str(self)
+
     @staticmethod
     def of(line):
         match = Rule.RE.match(line)
@@ -38,7 +47,7 @@ class Ticket:
     def __init__(self, fields) -> None:
         self.fields = fields
 
-    def valid(self, rules):
+    def is_possible(self, rules):
         errors = []
         for field in self.fields:
             v = False
@@ -51,13 +60,6 @@ class Ticket:
     @staticmethod
     def of(line):
         return Ticket([int(x) for x in line.split(',')])
-
-
-def permutations(values: set):
-    p = []
-    for v in values:
-        p.append([v])
-    return p
 
 
 def run(lines: typing.List[str]):
@@ -74,8 +76,6 @@ def run(lines: typing.List[str]):
     il += 2
     my_ticket = Ticket.of(lines[il])
 
-    print(my_ticket.valid(rules))
-
     # tickets
     tickets = []
     il += 3 # skip blank line
@@ -86,7 +86,7 @@ def run(lines: typing.List[str]):
     errors = []
     valids = []
     for t in tickets:
-        error = t.valid(rules)
+        error = t.is_possible(rules)
         errors.append(error)
         if not len(error):
             valids.append(t)
@@ -96,10 +96,35 @@ def run(lines: typing.List[str]):
         rate += sum(error)
     print(rate)
 
-    values = set([x for x in range(len(valids[0].fields))])
-    possibilities = permutations(values)
-    pass
+    possibilities = []
+    for i in range(len(rules)):
+        possibility = []
+        for j, r in enumerate(rules):
+            valid = True
+            for v in valids:
+                valid &= r.valid(v.fields[i])
+            if valid:
+                possibility.append(r)
+        possibilities.append(possibility)
 
+    order = {}
+    for j in range(len(rules)):
+        to_remove = None
+        for i, p in enumerate(possibilities):
+            if len(p) == 1:
+                to_remove = p[0]
+                order[i] = to_remove
+                break
+        
+        for p in possibilities:
+            if to_remove in p:
+                p.remove(to_remove)
+
+    product = 1
+    for i, r in order.items():
+        if r.name.startswith("departure"):
+            product *= my_ticket.fields[i]
+    print(product)
 
 class Test(unittest.TestCase):
     def test_rules(self):
