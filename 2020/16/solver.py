@@ -53,12 +53,11 @@ class Ticket:
         return Ticket([int(x) for x in line.split(',')])
 
 
-def permutations(values: set, current: set):
-    diff = values - current
-    while(len(diff)):
-        for v in diff:
-            current.add(v)
-    return current
+def permutations(values: set):
+    p = []
+    for v in values:
+        p.append([v])
+    return p
 
 
 def run(lines: typing.List[str]):
@@ -98,7 +97,7 @@ def run(lines: typing.List[str]):
     print(rate)
 
     values = set([x for x in range(len(valids[0].fields))])
-    possibilities = permutations(values, set())
+    possibilities = permutations(values)
     pass
 
 
