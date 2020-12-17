@@ -27,8 +27,11 @@ class Cube:
                     n.append(Cube(x, y, z, False))
         return n
 
+    # def __eq__(self, o: object) -> bool:
+    #     return self.x == self.o and self.y == o.y and self.z == o.z
+
     def __str__(self) -> str:
-        return f"x={self.x}, y={self.y}, z={self.z}, active={self.active}"
+        return f"[x={self.x}, y={self.y}, z={self.z}, active={self.active}]"
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -42,13 +45,18 @@ def run(lines: typing.List[str]):
         for x, c in enumerate(line):
             cubes[0][y][x] = Cube(x, y, 0, c == '#')
 
-    changes = []
+    changes = set()
+    add = set()
     for z in cubes.values():
         for y in z.values():
             for x in y.values():
-                actives = list(filter(lambda c: c.active, x.neighbors(cubes)))
-                if x.active and (len(actives) >= 2 or len(actives) <= 3):
-                    changes.append(x)
+                neighbors = x.neighbors(cubes)
+                actives = list(filter(lambda c: c.active, neighbors))
+                if x.active and (len(actives) < 2 or len(actives) > 3):
+                    changes.add(x)
                 elif not x.active and len(actives) == 3:
-                    changes.append(x)
+                    changes.add(x)
+
+                # for c in neighbors:
+                #     print(c)
     print(changes)
