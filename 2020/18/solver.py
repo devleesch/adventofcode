@@ -69,7 +69,8 @@ def evaluate2(line: str):
             end += 1
         start += 1
         sub = line[start:end]
-        line = line.replace(sub, str(evaluate(sub)))
+        t1, sign, t2 = sub.split()
+        line = line.replace(sub, str(compute(t1, sign, t2)))
 
     op = split(line)
     i = 0
