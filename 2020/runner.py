@@ -4,7 +4,7 @@ import time
 
 from helper import elapsed
 
-day = 17
+day = 18
 solver = 'solver'
 file = 'input.txt'
 
