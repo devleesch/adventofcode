@@ -2,6 +2,11 @@ import typing
 import unittest
 import re
 
+def split(line: str):
+    line = line.replace('(', '( ')
+    line = line.replace(')', ' )')
+    return line.split()
+
 def compute(t1, sign, t2):
     t1 = int(t1)
     t2 = int(t2)
@@ -13,36 +18,32 @@ def compute(t1, sign, t2):
 
 
 def evaluate(line: str):
-    line = line.replace('(', '( ')
-    line = line.replace(')', ' )')
-    op = line.split()
-    while(len(op) > 1):
-        i = 0
-        p = 0
-        args = []
-        while(True):
-            if op[i] == '(':
+    while(line.find('(') >= 0):
+        start = line.find('(') + 1
+        end = start
+        p = 1
+        while(end < len(line)):
+            if line[end] == '(':
                 p += 1
-                args = []
-            elif op[i] == ')':
+            elif line[end] == ')':
                 p -= 1
-            else:
-                args.append(i)
-
-            if p == 0 and len(args) == 3:
+            if p == 0:
                 break
+            end += 1
+        sub = line[start:end]
+        line = line.replace('('+sub+')', str(evaluate(sub)))
 
-            i += 1
-
-        result = compute(op.pop(args[0]), op.pop(args[1]-1), op.pop(args[2]-2))
-        op.insert(0, str(result))
+    op = split(line)
+    i = 0
+    while(len(op) > 1):
+        op.insert(0, str(compute(op.pop(0), op.pop(0), op.pop(0))))
     return int(op[0])
 
 def run(lines: typing.List[str]):
     sum = 0
     for l in lines:
         sum += evaluate(l)
-    return sum
+    print(sum)
 
 
 class Test(unittest.TestCase):
@@ -50,9 +51,11 @@ class Test(unittest.TestCase):
         self.assertEqual(71, evaluate("1 + 2 * 3 + 4 * 5 + 6"))
     
     def test_evaluate_with_parentheses(self):
-        self.assertEqual(71, evaluate("1 + (2 * 3) + (4 * (5 + 6))"))
-        #self.assertEqual(26, evaluate("2 * 3 + (4 * 5)"))
-        pass
+        self.assertEqual(51, evaluate("1 + (2 * 3) + (4 * (5 + 6))"))
+        self.assertEqual(26, evaluate("2 * 3 + (4 * 5)"))
+        self.assertEqual(437, evaluate("5 + (8 * 3 + 9 + 3 * 4 * 3)"))
+        self.assertEqual(12240, evaluate("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))"))
+        self.assertEqual(13632, evaluate("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2"))
 
 if __name__ == "__main__":
     unittest.main()
