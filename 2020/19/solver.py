@@ -84,3 +84,4 @@ def run(lines: typing.List[str]):
 
     #check_messages(0, messages, rules, True)
     check_messages(42, messages, rules, True)
+    check_messages(31, messages, rules, True)
