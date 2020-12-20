@@ -49,6 +49,7 @@ def check_messages(index, messages, rules, ignore_length):
 
         if valid and (len(line) == size or ignore_length):
             nb_valid += 1 if valid else 0
+            print(line, size, valid)
         
     print(f"nb_valid={nb_valid}")
 
