@@ -54,6 +54,23 @@ def check_messages(index, messages, rules, ignore_length):
     print(f"nb_valid={nb_valid}")
 
 
+def check_part2(messages, rules):
+    nb_valid = 0
+    for line in messages:
+        tmp = line
+        i = 0
+
+        valid = True
+        while valid and len(tmp):
+            valid, size = rules[42].is_valid(tmp, 0, rules)
+            tmp = tmp[size:]
+            i += size
+
+        valid, size = rules[31].is_valid(tmp, 0, rules)
+        
+        
+
+
 def run(lines: typing.List[str]):
     i = 0
 
@@ -83,5 +100,6 @@ def run(lines: typing.List[str]):
         i += 1
 
     #check_messages(0, messages, rules, True)
-    check_messages(42, messages, rules, True)
-    check_messages(31, messages, rules, True)
+    #check_messages(42, messages, rules, True)
+
+    check_part2(messages, rules)
