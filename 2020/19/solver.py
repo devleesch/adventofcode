@@ -42,13 +42,27 @@ class Rule:
             r.conditions.append(o.split())
         return r
 
+def check_messages(index, messages, rules, ignore_length):
+    nb_valid = 0
+    for line in messages:
+        valid, size = rules[index].is_valid(line, 0, rules)
+
+        if valid and (len(line) == size or ignore_length):
+            nb_valid += 1 if valid else 0
+        
+    print(f"nb_valid={nb_valid}")
+
+
 def run(lines: typing.List[str]):
     i = 0
 
     # rules
     rules = dict()
-    while(i < len(lines)):
+    while i < len(lines):
         line = lines[i]
+
+        #line = line.replace("8: 42", "8: 42 | 42 8")
+        #line = line.replace("11: 42 31", "11: 42 31 | 42 11 31")
 
         if not line:
             break
@@ -60,15 +74,12 @@ def run(lines: typing.List[str]):
     i += 1
 
     # messages
+    messages = []
     nb_valid = 0
-    while(i < len(lines)):
+    while i < len(lines):
         line = lines[i]
-        #print(line)
-        valid, size = rules[0].is_valid(line, 0, rules)
-        #print(f"{lines[i]} -> {valid} {size}")
-        if valid and len(line) == size:
-            nb_valid += 1 if valid else 0
-    
+        messages.append(line)
         i += 1
-    
-    print(f"nb_valid={nb_valid}")
+
+    #check_messages(0, messages, rules, True)
+    check_messages(42, messages, rules, True)
