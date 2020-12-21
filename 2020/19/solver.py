@@ -57,16 +57,36 @@ def check_messages(index, messages, rules, ignore_length):
 def check_part2(messages, rules):
     nb_valid = 0
     for line in messages:
-        tmp = line
+        print(line)
         i = 0
 
         valid = True
-        while valid and len(tmp):
-            valid, size = rules[42].is_valid(tmp, 0, rules)
-            tmp = tmp[size:]
-            i += size
+        nb_42 = 0
+        while valid and len(line[i:]):
+            valid, size = rules[42].is_valid(line[i:], 0, rules)
+            if valid:
+                nb_42 += 1
+                i += size
+                print(42)
+                #print(line[:i], line[i:], line)
 
-        valid, size = rules[31].is_valid(tmp, 0, rules)
+        if i < len(line):
+            valid = True
+            while valid and i < len(line) and nb_42 > 1:
+                valid, size = rules[31].is_valid(line[i:], 0, rules)
+                if valid:
+                    nb_42 -= 1
+                    i += size
+                    print(31)
+                    #print(line[:i], line[i:], line)
+
+            valid &= len(line) == i and nb_42 >= 1
+            print(valid, line)
+            print()
+            if valid:
+                nb_valid += 1
+                print(line)
+    print(nb_valid)
         
         
 
@@ -79,9 +99,6 @@ def run(lines: typing.List[str]):
     while i < len(lines):
         line = lines[i]
 
-        #line = line.replace("8: 42", "8: 42 | 42 8")
-        #line = line.replace("11: 42 31", "11: 42 31 | 42 11 31")
-
         if not line:
             break
         r = Rule.of(line)
@@ -93,7 +110,6 @@ def run(lines: typing.List[str]):
 
     # messages
     messages = []
-    nb_valid = 0
     while i < len(lines):
         line = lines[i]
         messages.append(line)
