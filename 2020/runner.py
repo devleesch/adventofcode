@@ -4,9 +4,9 @@ import time
 
 from helper import elapsed
 
-day = 19
+day = 21
 solver = 'solver'
-file = 'input.txt'
+file = 'a.txt'
 
 # start time to track execution time
 start = time.monotonic()
