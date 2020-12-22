@@ -60,7 +60,6 @@ def run(lines: typing.List[str]):
                         if to_remove in by_allergens_possibilities[o]:
                             by_allergens_possibilities[o].remove(to_remove)
     
-    print(by_allergens_possibilities)
     result = ""
     for k in sorted(by_allergens_possibilities.keys()):
         result += ","+list(by_allergens_possibilities[k])[0]
