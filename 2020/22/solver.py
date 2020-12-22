@@ -42,9 +42,8 @@ class Game:
 
             if self.deck_0.size() >= c_0 and self.deck_1.size() >= c_1:
                 print("Playing a sub-game to determine the winner...")
-                sub_game = Game(Deck(self.deck_0.cards[0:c_0]), Deck(self.deck_1.cards[0:c_1]))
                 jx += 1
-                winner, jx = sub_game.play_recurse(jx)
+                winner, jx = Game(Deck(self.deck_0.cards[0:c_0]), Deck(self.deck_1.cards[0:c_1])).play_recurse(jx)
             else:
                 winner = 0 if c_0 > c_1 else 1
                             
