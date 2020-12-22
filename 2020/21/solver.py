@@ -28,17 +28,17 @@ def run(lines: typing.List[str]):
                 by_allergens[a] = []
             by_allergens[a].append(d)
 
-    allergens = set()
+    can_contains = set()
     for allergen, dish in by_allergens.items():
         r = dish[0].ingredients
         for d in dish:
             r = d.ingredients & r
-        allergens.update(r)
+        can_contains.update(r)
         print(allergen, r)
     
     count = 0
     for d in dishes:
         for ingredient in d.ingredients:
-            if not ingredient in allergens:
+            if not ingredient in can_contains:
                 count += 1
     print(f"count={count}")
