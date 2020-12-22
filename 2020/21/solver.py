@@ -7,6 +7,13 @@ class Dish:
         self.allergens = allergens
 
 
+def all_found(map):
+    for i in map:
+        if len(map[i]) > 1:
+            return False
+    return True
+
+
 def run(lines: typing.List[str]):
     RE = re.compile("(.+?) \(contains (.+?)\)")
 
@@ -29,12 +36,13 @@ def run(lines: typing.List[str]):
             by_allergens[a].append(d)
 
     can_contains = set()
+    by_allergens_possibilities = {}
     for allergen, dish in by_allergens.items():
         r = dish[0].ingredients
         for d in dish:
             r = d.ingredients & r
         can_contains.update(r)
-        print(allergen, r)
+        by_allergens_possibilities[allergen] = r
     
     count = 0
     for d in dishes:
@@ -42,3 +50,18 @@ def run(lines: typing.List[str]):
             if not ingredient in can_contains:
                 count += 1
     print(f"count={count}")
+
+    while not all_found(by_allergens_possibilities):
+        for a in by_allergens_possibilities:
+            if len(by_allergens_possibilities[a]) == 1:
+                to_remove = list(by_allergens_possibilities[a])[0]
+                for o in by_allergens_possibilities:
+                    if o != a:
+                        if to_remove in by_allergens_possibilities[o]:
+                            by_allergens_possibilities[o].remove(to_remove)
+    
+    print(by_allergens_possibilities)
+    result = ""
+    for k in sorted(by_allergens_possibilities.keys()):
+        result += ","+list(by_allergens_possibilities[k])[0]
+    print(result[1:])
