@@ -20,14 +20,14 @@ class Game:
 
     def play_recurse(self, ix):
         round = 1
-        winner = 0
+        winner = None
         played = set()
         jx = ix
         while self.deck_0.size() > 0 and self.deck_1.size() > 0:
-            if self in played:
-                return 0, jx
+            if str(self) in played:
+                return 0, jx+1
 
-            played.add(self.copy())
+            played.add(str(self))
 
             print()
             print(f"-- Round {round} (Game {ix}) --")
@@ -40,8 +40,7 @@ class Game:
             c_1 = self.deck_1.pop()
             print(f"Player 2 plays: {c_1}")
 
-            winner = 0
-            if c_0 <= self.deck_0.size() and c_1 <= self.deck_1.size():
+            if self.deck_0.size() >= c_0 and self.deck_1.size() >= c_1:
                 print("Playing a sub-game to determine the winner...")
                 sub_game = Game(Deck(self.deck_0.cards[0:c_0]), Deck(self.deck_1.cards[0:c_1]))
                 jx += 1
@@ -62,18 +61,8 @@ class Game:
         print(f"The winner of game {ix} is player {winner + 1}!")
         return winner, jx
 
-    def copy(self):
-        return Game(Deck(self.deck_0.cards.copy()), Deck(self.deck_1.cards.copy()))
-
-    def __eq__(self, o: object) -> bool:
-        if o == None:
-            return False
-        return self.deck_0 == o.deck_0 and self.deck_1 == o.deck_1
-
-    def __hash__(self) -> int:
-        hash = self.deck_0.__hash__()
-        hash += self.deck_1.__hash__()
-        return hash
+    def __str__(self) -> str:
+        return str(self.deck_0) + "|" + str(self.deck_1)
 
 class Deck:
     def __init__(self, cards) -> None:
@@ -88,23 +77,8 @@ class Deck:
     def size(self):
         return len(self.cards)
 
-    def __eq__(self, o: object) -> bool:
-        if o == None:
-            return False
-        
-        if self.size() != o.size():
-            return False
-
-        for i in range(self.size()):
-            if self.cards[i] != o.cards[i]:
-                return False
-        return True
-
-    def __hash__(self) -> int:
-        hash = 0
-        for i in range(self.size()):
-            hash += self.cards[i] * self.size() - i
-        return hash
+    def __str__(self) -> str:
+        return str(self.cards)
 
 
 def read_cards(lines, i, cards):
