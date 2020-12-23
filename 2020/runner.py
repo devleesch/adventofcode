@@ -4,9 +4,9 @@ import time
 
 from helper import elapsed
 
-day = 22
+day = 23
 solver = 'solver'
-file = 'input.txt'
+file = None#'input.txt'
 
 # start time to track execution time
 start = time.monotonic()
@@ -14,7 +14,9 @@ start = time.monotonic()
 # import puzzle solver
 mod = importlib.import_module(f'{day:02d}.{solver}')
 # read input of the file
-lines = helper.readlines(f'{day:02d}/{file}')
+lines = []
+if file:
+    lines = helper.readlines(f'{day:02d}/{file}')
 # run module solver with input file line by line
 mod.run(lines)
 
