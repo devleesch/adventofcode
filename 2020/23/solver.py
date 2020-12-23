@@ -2,8 +2,9 @@ import typing
 
 
 class CrabCups:
-    def __init__(self, cups: set) -> None:
-        self.cups = cups
+    def __init__(self, first, max) -> None:
+        self.first = first
+        self.max = max
 
     def move(self, current):
         #print("cups: " + str(self))
@@ -16,7 +17,7 @@ class CrabCups:
         current.next = next
         #print("pick up: " + str(pick_up))
 
-        dest = self.destination(current, set(self.cups) - set(pick_up))
+        dest = self.destination(current, pick_up)
         #print("destination: " + str(dest))
         tmp = dest.next
         dest.next = pick_up[0]
@@ -25,9 +26,11 @@ class CrabCups:
         # print()
         return current.next
 
-    def destination(self, start, subset):
+    def destination(self, start):
         max = None
         min = None
+
+        current = start
         for cup in subset:
             if max == None or cup.label > max.label:
                 max = cup
@@ -36,9 +39,10 @@ class CrabCups:
 
         target = start.label - 1
         while target >= min.label:
-            for cup in subset:
-                if cup.label == target:
-                    return cup
+            current = start
+            while current.label != start.label:
+                if current.label == target:
+                    return current
             target -= 1
         
         return max
@@ -56,22 +60,23 @@ class CrabCups:
     @staticmethod
     def of(input):
         input = [int(x) for x in input]
+        input.append(10)
 
-        cups = []
         previous = None
         for c in input:
             cup = Cup(c)
             if previous:
                 previous.next = cup
-            cups.append(cup)
             previous = cup
-        previous.next = cups[0]
-        return CrabCups(cups)
+        return CrabCups()
 
 class Cup:
     def __init__(self, label) -> None:
         self.label = label
         self.next = None
+
+    def get_next(self):
+        
 
     def __eq__(self, o: object) -> bool:
         if o == None:
