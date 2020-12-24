@@ -56,7 +56,7 @@ class CrabCups:
             previous = cup
             cups[label] = cup
         previous.next = cups[input[0]]
-        print("game has been setuped !")
+        print("game initialized !")
         return CrabCups(cups)
 
 class Cup:
