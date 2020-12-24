@@ -2,81 +2,67 @@ import typing
 
 
 class CrabCups:
-    def __init__(self, first, max) -> None:
-        self.first = first
-        self.max = max
 
-    def move(self, current):
+    MAX = 1_000_000
+
+    def __init__(self, cups: dict) -> None:
+        self.cups = cups
+
+    def move(self, start):
         #print("cups: " + str(self))
         pick_up = []
-        next = current.next
+        current = start.next
         for _ in range(3):
-            pick_up.append(next)
-            current.next = next
-            next = next.next
-        current.next = next
+            pick_up.append(current.label)
+            current = current.next
+
+        start.next = current
         #print("pick up: " + str(pick_up))
 
-        dest = self.destination(current, pick_up)
+        dest = self.cups[self.destination(start, pick_up)]
         #print("destination: " + str(dest))
         tmp = dest.next
-        dest.next = pick_up[0]
-        pick_up[2].next = tmp
+        dest.next = self.cups[pick_up[0]]
+        self.cups[pick_up[2]].next = tmp
 
         # print()
-        return current.next
+        return start.next
 
-    def destination(self, start):
-        max = None
-        min = None
+    def destination(self, start, pick_up):
+        dest = start.label - 1
+        while dest > 0:
+            if not dest in pick_up:
+                return dest
+            dest -= 1
 
-        current = start
-        for cup in subset:
-            if max == None or cup.label > max.label:
-                max = cup
-            if min == None or cup.label < min.label:
-                min = cup
-
-        target = start.label - 1
-        while target >= min.label:
-            current = start
-            while current.label != start.label:
-                if current.label == target:
-                    return current
-            target -= 1
+        max = CrabCups.MAX
+        while max in pick_up:
+            max = max.label - 1
         
         return max
 
-    def __str__(self) -> str:
-        r = ""
-        for c in self.cups:
-            if c.label == 1:
-                next = c.next
-                while next != c:
-                    r += str(next.label) + " "
-                    next = next.next
-        return r
-
     @staticmethod
     def of(input):
+        print("initializing game")
         input = [int(x) for x in input]
-        input.append(10)
-
+        input.extend([x for x in range(10, CrabCups.MAX+1)])
         previous = None
+        cups = {}
         for c in input:
-            cup = Cup(c)
+            label = int(c)
+            cup = Cup(label)
             if previous:
                 previous.next = cup
             previous = cup
-        return CrabCups()
+            cups[label] = cup
+        previous.next = cups[input[0]]
+        print("game has been setuped !")
+        return CrabCups(cups)
 
 class Cup:
     def __init__(self, label) -> None:
         self.label = label
         self.next = None
-
-    def get_next(self):
-        
 
     def __eq__(self, o: object) -> bool:
         if o == None:
@@ -93,21 +79,29 @@ class Cup:
         return str(self)
 
 def run(lines: typing.List[str]):
-    a = "389125467"
+    #input = "389125467"
     input = "789465123"
-    cc = CrabCups.of(a)
+    game = CrabCups.of(input)
 
-    current = cc.cups[0]
+    current = game.cups[int(input[0])]
     for i in range(10000000):
         if i % 100000 == 0:
             print(f"-- move {i+1} --")
-        current = cc.move(current)
+        current = game.move(current)
 
-    for c in cc.cups:
-        if c.label == 1:
-            current = c.next
-            while current != c:
-                print(current.label, end='')
-                current = current.next
-            print()
-            break
+    current = game.cups[1]
+    product = 1
+    for _ in range(2):
+        current = current.next
+        print(current.label)
+        product *= current.label
+    print(product)
+
+    # for c in game.cups:
+    #     if c.label == 1:
+    #         current = c.next
+    #         while current != c:
+    #             print(current.label, end='')
+    #             current = current.next
+    #         print()
+    #         break
