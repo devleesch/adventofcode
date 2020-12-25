@@ -59,30 +59,43 @@ class Tile:
         return extended
 
     def flip(self):
-        print(f"flip: {self.id} - white: {not self.white}")
+        #print(f"flip: {self.id} - white: {not self.white}")
         self.white = not self.white
 
-# def count(tile, visited):
-#     c = 0
-#     if not tile.id in visited:
-#         visited.add(tile.id)
-#         if tile.white == False:
-#             c += 1
-#         for n in tile.neighbors.values():
-#             c += count(n, visited)
-#     return c
+
+def count(tile, visited):
+    c = 0
+    if not tile in visited:
+        visited.add(tile)
+        if tile.white == False:
+            c += 1
+        for n in tile.neighbors.values():
+            c += count(n, visited)
+    return c
+
+def live(tiles):
+    to_flip = set()
+    for tile in tiles:
+        nb_black = len(list(filter(lambda x: not x.white, tile.neighbors.values())))
+        if not tile.white and (nb_black == 0 or nb_black > 2):
+            to_flip.add(tile)
+        elif tile.white and nb_black == 2:
+            to_flip.add(tile)
+    return to_flip
+
 
 def run(lines: typing.List[str]):
+    tiles = set()
     origin = Tile()
+    tiles.add(origin)
     to_extend = origin.extend()
-    level = 0
+    tiles.update(to_extend)
 
-    nb_black = 0
+    blacks = set()
     for line in lines:
-        print(line)
+        #print(line)
         current = origin
         i = 0
-        e = 1
         while i < len(line):
             op = line[i]
             if op in ['n', 's']:
@@ -93,18 +106,36 @@ def run(lines: typing.List[str]):
             d = Direction.of(op)
             current = current.get(d)
 
-            if e > level:
-                print(f"extend {e}")
+            if len(current.neighbors) < 6:
                 new = set()
                 for tile in to_extend:
                     new.update(tile.extend())
                 to_extend = new
-                e += 1
-                level += 1
-
-        nb_black += 1 if current.white else -1
+                tiles.update(to_extend)
         current.flip()
-    print(f"nb_black={nb_black}")
+        if not current.white:
+            blacks.add(current)
+        else:
+            blacks.remove(current)
+
+    print(f"nb_black={len(blacks)}")
+
+    for i in range(1, 101):
+        to_flip = live(tiles)
+        for tile in to_flip:
+            tile.flip()
+            if not tile.white:
+                blacks.add(tile)
+            else:
+                blacks.remove(tile)
+
+            if len(tile.neighbors) < 6:
+                new = set()
+                for tile in to_extend:
+                    new.update(tile.extend())
+                to_extend = new
+                tiles.update(to_extend)
+        print(f"Day {i}: {len(blacks)}")
 
 class Test(unittest.TestCase):
     def test_opposit(self):
