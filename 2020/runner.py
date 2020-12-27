@@ -6,7 +6,7 @@ from helper import elapsed
 
 day = 20
 solver = 'solver'
-file = 'a.txt'
+file = 'input.txt'
 #file = None
 
 # start time to track execution time

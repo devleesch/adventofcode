@@ -1,5 +1,6 @@
 import typing
 import enum
+import unittest
 
 
 SEA_MONSTER = [
@@ -122,11 +123,40 @@ class Tile:
             i += 1
         return value
 
-def run(lines: typing.List[str]):
+def apply_mask(line: str, mask: str):
+    masked = ""
+    for i, c in enumerate(line):
+        masked += c if c == '#' and c == mask[i] else ' '
+    return masked
+
+def is_sea_monster(lines: typing.List[str]):
+    for i, line in enumerate(lines):
+        if apply_mask(line, SEA_MONSTER[i]) != SEA_MONSTER[i]:
+            return False
+    return True
+
+def search_sea_monsters(picture: Tile):
+    found = 0
+    lines_3 = []
+    for line in picture.pic:
+        lines_3.append(line)
+        if len(lines_3) == 4:
+            lines_3.remove(lines_3[0])
+
+        if len(lines_3) == 3:
+            for i in range(len(line) - len(SEA_MONSTER[0])):
+                window = []
+                for line_3 in lines_3:
+                    window.append(line_3[i:i+len(SEA_MONSTER[0])])
+                if is_sea_monster(window):
+                    found += 1
+    return found
+
+def run(lines_3: typing.List[str]):
     # create tiles from lines
     tiles = []
     tile = []
-    for line in lines:
+    for line in lines_3:
         if line:
             tile.append(line)
         else:
@@ -179,6 +209,43 @@ def run(lines: typing.List[str]):
             current_x = current_x.sides[Side.RIGHT] if Side.RIGHT in current_x.sides else None
         current_y = current_y.sides[Side.BOTTOM] if Side.BOTTOM in current_y.sides else None
         f += 1
-    
     picture = Tile(0, raw_picture)
-    pass
+
+    # seraching for sea monsters
+    found = 0
+    for f in range(2): # flip
+        for _ in range(4):
+            found = search_sea_monsters(picture)
+            if found:
+                break
+            picture.rotate()
+        if found:
+            break
+        if f == 0:
+            picture.flip_left_right()
+        else:
+            picture.flip_left_right()
+            picture.flip_top_bottom()
+
+    count = 0
+    for line in picture.pic:
+        for c in line:
+            count += 1 if c == '#' else 0
+    for i in range(found):
+        for line_sea_monster in SEA_MONSTER:
+            for c_sea_monster in line_sea_monster:
+                count -= 1 if c_sea_monster == '#' else 0
+    print(f"count={count}")
+
+
+class Test(unittest.TestCase):
+    def test_is_sea_monster(self):
+        self.assertTrue(is_sea_monster(['.#...#.###...#.##.##',
+                                        '#.##.###.#.##.##.###',
+                                        '##.###.####..#.####.']))
+        self.assertFalse(is_sea_monster(['.#...#.###...#.##.##',
+                                         '#.##.###.#.##.##.#.#',
+                                         '##.###.####..#.####.']))
+
+if __name__ == "__main__":
+    unittest.main()
