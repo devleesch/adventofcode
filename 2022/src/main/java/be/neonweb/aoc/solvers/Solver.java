@@ -3,21 +3,24 @@ package be.neonweb.aoc.solvers;
 import be.neonweb.aoc.utils.Stopwatch;
 import lombok.extern.slf4j.Slf4j;
 import org.ehcache.CacheManager;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
 
-import java.io.File;
 import java.util.Objects;
 
 @Slf4j
 public abstract class Solver {
 
+    protected boolean doPart1 = true;
+    protected boolean doPart2 = true;
     protected CacheManager cacheManager;
+
+    public abstract void config() throws Exception;
 
     public abstract void parse() throws Exception;
 
-    public abstract void solve() throws Exception;
+    public abstract Object part1() throws Exception;
+
+    public abstract Object part2() throws Exception;
 
     private void internalParse() throws Exception {
         Stopwatch stopwatch = Stopwatch.start();
@@ -29,7 +32,12 @@ public abstract class Solver {
     private void internalSolve() throws Exception {
         Stopwatch stopwatch = Stopwatch.start();
         log.info("start solve()");
-        solve();
+        if (doPart1) {
+            log.info("part1: " + part1());
+        }
+        if (doPart2) {
+            log.info("part2: " + part2());
+        }
         log.info("end solve() - " + stopwatch.stop());
     }
 
@@ -45,6 +53,8 @@ public abstract class Solver {
             log.debug(this.getClass()
                           .getCanonicalName());
             initCache();
+
+            config();
 
             internalParse();
             internalSolve();
