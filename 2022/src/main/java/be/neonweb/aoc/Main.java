@@ -12,7 +12,8 @@ import java.util.Map;
 @Slf4j
 public class Main {
 
-    private static final String DAY = "D03";
+    public static final String SOLVERS_PACKAGE = "be.neonweb.aoc.solvers";
+    private static final String DAY = "D02";
     private static final Map<String, Solver> SOLVERS = new HashMap<>();
 
     public static void main(String[] args) {
@@ -24,7 +25,7 @@ public class Main {
         SOLVERS.entrySet()
                .stream()
                .filter(entry -> entry.getKey()
-                                     .matches(DAY + ".*"))
+                                     .matches(SOLVERS_PACKAGE.replaceAll(".", "\\.") + "\\..*\\." + DAY + ".*"))
                .sorted(Map.Entry.comparingByKey())
                .forEach(entry -> entry.getValue()
                                       .run());
@@ -33,18 +34,13 @@ public class Main {
     }
 
     private static void addSolvers() {
-        Reflections reflections = new Reflections("be.neonweb.aoc.solvers");
+        Reflections reflections = new Reflections(SOLVERS_PACKAGE);
 
         reflections.getSubTypesOf(Solver.class)
                    .forEach(solver -> {
-                       log.info("Loading Solver: " + solver.getSimpleName());
-                       SOLVERS.put(solver.getSimpleName(), getSolver(solver));
+                       log.info("Loading Solver: " + solver.getCanonicalName());
+                       SOLVERS.put(solver.getCanonicalName(), getSolver(solver));
                    });
-    }
-
-    private static Integer getIndex(Class<? extends Solver> solver) {
-        return Integer.parseInt(solver.getSimpleName()
-                                      .substring(1));
     }
 
     private static Solver getSolver(Class<? extends Solver> solver) {
