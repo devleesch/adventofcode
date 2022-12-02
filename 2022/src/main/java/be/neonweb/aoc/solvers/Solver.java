@@ -10,8 +10,8 @@ import java.util.Objects;
 @Slf4j
 public abstract class Solver {
 
-    protected boolean doPart1 = true;
-    protected boolean doPart2 = true;
+    protected boolean skipPart1 = false;
+    protected boolean skipPart2 = false;
     protected CacheManager cacheManager;
 
     public abstract void config() throws Exception;
@@ -32,10 +32,10 @@ public abstract class Solver {
     private void internalSolve() throws Exception {
         Stopwatch stopwatch = Stopwatch.start();
         log.info("start solve()");
-        if (doPart1) {
+        if (!skipPart1) {
             log.info("part1: " + part1());
         }
-        if (doPart2) {
+        if (!skipPart2) {
             log.info("part2: " + part2());
         }
         log.info("end solve() - " + stopwatch.stop());

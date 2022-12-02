@@ -1,11 +1,11 @@
 package be.neonweb.aoc;
 
-import be.neonweb.aoc.solvers.d01.D01;
 import be.neonweb.aoc.solvers.Solver;
-import be.neonweb.aoc.solvers.d02.D02;
 import be.neonweb.aoc.utils.Stopwatch;
 import lombok.extern.slf4j.Slf4j;
+import org.reflections.Reflections;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,8 +28,28 @@ public class Main {
     }
 
     private static void addSolvers() {
-        SOLVERS.put(1, new D01());
-        SOLVERS.put(2, new D02());
+        Reflections reflections = new Reflections("be.neonweb.aoc.solvers");
+
+        reflections.getSubTypesOf(Solver.class)
+                   .forEach(solver -> {
+                       log.info("Loading Solver: " + solver.getSimpleName());
+                       SOLVERS.put(getIndex(solver), getSolver(solver));
+                   });
+    }
+
+    private static Integer getIndex(Class<? extends Solver> solver) {
+        return Integer.parseInt(solver.getSimpleName()
+                                      .substring(1));
+    }
+
+    private static Solver getSolver(Class<? extends Solver> solver) {
+        try {
+            return (Solver) Class.forName(solver.getCanonicalName())
+                                 .getConstructor()
+                                 .newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
