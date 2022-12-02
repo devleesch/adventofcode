@@ -2,10 +2,10 @@ package be.neonweb.aoc.solvers.d03;
 
 import be.neonweb.aoc.solvers.Solver;
 
-public class D03 extends Solver {
+public class D03a extends Solver {
     @Override
     public void config() throws Exception {
-        
+
     }
 
     @Override
@@ -14,12 +14,7 @@ public class D03 extends Solver {
     }
 
     @Override
-    public Object part1() throws Exception {
-        return null;
-    }
-
-    @Override
-    public Object part2() throws Exception {
+    public Object solve() throws Exception {
         return null;
     }
 }

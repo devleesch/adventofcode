@@ -10,17 +10,13 @@ import java.util.Objects;
 @Slf4j
 public abstract class Solver {
 
-    protected boolean skipPart1 = false;
-    protected boolean skipPart2 = false;
     protected CacheManager cacheManager;
 
     public abstract void config() throws Exception;
 
     public abstract void parse() throws Exception;
 
-    public abstract Object part1() throws Exception;
-
-    public abstract Object part2() throws Exception;
+    public abstract Object solve() throws Exception;
 
     private void internalParse() throws Exception {
         Stopwatch stopwatch = Stopwatch.start();
@@ -32,12 +28,7 @@ public abstract class Solver {
     private void internalSolve() throws Exception {
         Stopwatch stopwatch = Stopwatch.start();
         log.info("start solve()");
-        if (!skipPart1) {
-            log.info("part1: " + part1());
-        }
-        if (!skipPart2) {
-            log.info("part2: " + part2());
-        }
+        log.info("solution: " + solve());
         log.info("end solve() - " + stopwatch.stop());
     }
 
@@ -52,8 +43,8 @@ public abstract class Solver {
         try {
             log.debug(this.getClass()
                           .getCanonicalName());
-            initCache();
 
+            initCache();
             config();
 
             internalParse();

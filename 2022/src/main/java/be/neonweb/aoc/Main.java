@@ -5,15 +5,15 @@ import be.neonweb.aoc.utils.Stopwatch;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 public class Main {
 
-    private static final int DAY = 2;
-    private static final Map<Integer, Solver> SOLVERS = new HashMap<>();
+    private static final String DAY = "D03";
+    private static final Map<String, Solver> SOLVERS = new HashMap<>();
 
     public static void main(String[] args) {
         Stopwatch stopwatch = Stopwatch.start();
@@ -21,8 +21,13 @@ public class Main {
 
         addSolvers();
 
-        SOLVERS.get(DAY)
-               .run();
+        SOLVERS.entrySet()
+               .stream()
+               .filter(entry -> entry.getKey()
+                                     .matches(DAY + ".*"))
+               .sorted(Map.Entry.comparingByKey())
+               .forEach(entry -> entry.getValue()
+                                      .run());
 
         log.info("finished in " + stopwatch.stop());
     }
@@ -33,7 +38,7 @@ public class Main {
         reflections.getSubTypesOf(Solver.class)
                    .forEach(solver -> {
                        log.info("Loading Solver: " + solver.getSimpleName());
-                       SOLVERS.put(getIndex(solver), getSolver(solver));
+                       SOLVERS.put(solver.getSimpleName(), getSolver(solver));
                    });
     }
 

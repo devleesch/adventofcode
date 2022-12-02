@@ -9,10 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class D02 extends Solver {
+public class D02a extends Solver {
 
-    private List<Game> games = new ArrayList<>();
-    private List<Game> games2 = new ArrayList<>();
+    protected List<Game> games = new ArrayList<>();
 
     @Override
     public void config() throws Exception {
@@ -23,22 +22,12 @@ public class D02 extends Solver {
     public void parse() throws Exception {
         Files.readAllLines(Path.of("src/main/resources/d02/input.txt"))
              .forEach(line -> games.add(Game.of(line)));
-
-        Files.readAllLines(Path.of("src/main/resources/d02/input.txt"))
-             .forEach(line -> games2.add(Game.of2(line)));
     }
 
     @Override
-    public Object part1() throws Exception {
+    public Integer solve() throws Exception {
         return games.stream()
                     .map(Game::points)
                     .reduce(0, Integer::sum);
-    }
-
-    @Override
-    public Object part2() throws Exception {
-        return games2.stream()
-                     .map(Game::points)
-                     .reduce(0, Integer::sum);
     }
 }

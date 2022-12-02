@@ -6,14 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class D01 extends Solver {
+public class D01a extends Solver {
 
-    private List<Elf> elves = new ArrayList<>();
+    protected List<Elf> elves = new ArrayList<>();
 
     @Override
     public void config() throws Exception {}
@@ -35,7 +34,7 @@ public class D01 extends Solver {
     }
 
     @Override
-    public Object part1() throws Exception {
+    public Long solve() throws Exception {
         Optional<Long> max = elves.stream()
                                   .map(Elf::getSnacks)
                                   .map(snacks -> snacks.stream()
@@ -45,14 +44,4 @@ public class D01 extends Solver {
         return max.orElse(null);
     }
 
-    @Override
-    public Object part2() throws Exception {
-        Long top3 = elves.stream()
-                         .sorted(Comparator.comparing(Elf::calories)
-                                           .reversed())
-                         .limit(3)
-                         .map(Elf::calories)
-                         .reduce(0L, Long::sum);
-        return top3;
-    }
 }
