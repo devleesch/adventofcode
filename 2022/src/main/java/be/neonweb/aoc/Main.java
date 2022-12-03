@@ -5,7 +5,6 @@ import be.neonweb.aoc.utils.Stopwatch;
 import lombok.extern.slf4j.Slf4j;
 import org.reflections.Reflections;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ import java.util.Map;
 public class Main {
 
     public static final String SOLVERS_PACKAGE = "be.neonweb.aoc.solvers";
-    private static final String DAY = "D02";
+    private static final String DAY = "D03";
     private static final Map<String, Solver> SOLVERS = new HashMap<>();
 
     public static void main(String[] args) {
