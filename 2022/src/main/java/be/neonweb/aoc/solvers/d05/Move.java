@@ -35,9 +35,9 @@ public class Move {
                              .pop());
         }
 
-        for (Character character : D05a.reverse(stack)) {
+        while (!stack.isEmpty()) {
             stacks.get(destination - 1)
-                  .push(character);
+                  .push(stack.pop());
         }
     }
 
