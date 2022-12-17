@@ -1,11 +1,13 @@
 package be.neonweb.aoc.utils;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Data
+@Builder
 public class Position implements Serializable {
 
     private int x;
