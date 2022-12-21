@@ -8,10 +8,7 @@ import org.paukov.combinatorics3.IGenerator;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -44,34 +41,55 @@ public class D16a extends Solver {
 
     @Override
     public Object solve() throws Exception {
-        List<String> bestValves = valves.values()
+        List<Valve> scoreValves = valves.values()
                                         .stream()
                                         .filter(valve -> valve.getFlowRate() > 0)
-                                        .map(Valve::getName)
+                                        .sorted(Comparator.comparing(Valve::getName))
                                         .toList();
 
-        return Generator.combination(bestValves)
-                        .simple(5)
-                        .stream()
-                        .parallel()
-                        .map(combination -> Generator.permutation(combination)
-                                                     .simple())
-                        .flatMap(IGenerator::stream)
-                        .map(this::score)
-                        .max(Integer::compareTo)
-                        .orElseThrow();
+        return explore(new ArrayList<>(), scoreValves, 0);
     }
 
-    int score(List<String> valves) {
+    int explore(List<Valve> path, List<Valve> valves, int max) {
+        int score = score(path);
+
+        if (score >= 0 && !valves.isEmpty()) {
+            int finalMax = max;
+            max = valves.stream()
+                        .parallel()
+                        .map(valve -> {
+                            ArrayList<Valve> newPath = new ArrayList<>(path);
+                            newPath.add(valve);
+
+                            ArrayList<Valve> newValves = new ArrayList<>(valves);
+                            newValves.remove(valve);
+
+                            return explore(newPath, newValves, finalMax);
+                        })
+                        .max(Integer::compareTo)
+                        .get();
+        }
+
+        /*if (score > max) {
+            String collect = path.stream()
+                                 .map(Valve::getName)
+                                 .collect(Collectors.joining("->"));
+            log.info(score + " = " + collect);
+        }*/
+
+        return Math.max(score, max);
+    }
+
+    int score(List<Valve> valves) {
         int tickLeft = 30;
         int score = 0;
 
-        String previous = "AA";
-        for (String valve : valves) {
+        Valve previous = this.valves.get("AA");
+        for (Valve valve : valves) {
             Set<Dijkstra.Node> nodes = getNodes();
-            Dijkstra.Node start = getNode(nodes, previous);
+            Dijkstra.Node start = getNode(nodes, previous.getName());
 
-            Dijkstra.Node end = getNode(nodes, valve);
+            Dijkstra.Node end = getNode(nodes, valve.getName());
             Integer pathSize = cache.computeIfAbsent(start.getSource() + "->" + end.getSource(), key -> Dijkstra.shortestPath(nodes, start, end)
                                                                                                                 .size());
 
@@ -85,15 +103,16 @@ public class D16a extends Solver {
                 return Integer.MIN_VALUE;
             }
 
-            score += tickLeft * this.valves.get(valve)
+            score += tickLeft * this.valves.get(valve.getName())
                                            .getFlowRate();
 
             previous = valve;
         }
+
         return score;
     }
 
-    private static Dijkstra.Node getNode(Set<Dijkstra.Node> nodes, String node) {
+    Dijkstra.Node getNode(Set<Dijkstra.Node> nodes, String node) {
         return nodes.stream()
                     .filter(n -> n.getSource()
                                   .equals(node))
