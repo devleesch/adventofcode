@@ -12,7 +12,7 @@ import java.util.Map;
 public class Main {
 
     public static final String SOLVERS_PACKAGE = "be.neonweb.aoc.solvers";
-    private static final String DAY = "D16";
+    private static final String DAY = "D17";
     private static final Map<String, Solver> SOLVERS = new HashMap<>();
 
     public static void main(String[] args) {

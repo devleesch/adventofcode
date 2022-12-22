@@ -26,7 +26,7 @@ public class D16a extends Solver {
 
     @Override
     public void parse() throws Exception {
-        valves = Files.readAllLines(Path.of("src/main/resources/d16/input.txt"))
+        valves = Files.readAllLines(Path.of("src/main/resources/d16/test1.txt"))
                       .stream()
                       .map(Valve::of)
                       .collect(Collectors.toMap(Valve::getName, Function.identity()));
@@ -51,7 +51,7 @@ public class D16a extends Solver {
     }
 
     int explore(List<Valve> path, List<Valve> valves, int max) {
-        int score = score(path);
+        int score = score(path, 30);
 
         if (score >= 0 && !valves.isEmpty()) {
             int finalMax = max;
@@ -80,8 +80,8 @@ public class D16a extends Solver {
         return Math.max(score, max);
     }
 
-    int score(List<Valve> valves) {
-        int tickLeft = 30;
+    int score(List<Valve> valves, int tick) {
+        int tickLeft = tick;
         int score = 0;
 
         Valve previous = this.valves.get("AA");
