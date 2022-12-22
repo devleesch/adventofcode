@@ -1,11 +1,15 @@
 package be.neonweb.aoc.solvers.d17;
 
 import be.neonweb.aoc.utils.Position;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
 @Slf4j
+@Getter
+@Setter
 public class Chamber {
 
     private int width;
