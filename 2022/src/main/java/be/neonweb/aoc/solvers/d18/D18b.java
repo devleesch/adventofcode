@@ -10,7 +10,7 @@ public class D18b extends D18a {
 
     @Override
     public void parse() throws Exception {
-        cubes = Files.readAllLines(Path.of("src/main/resources/d18/test1.txt"))
+        cubes = Files.readAllLines(Path.of("src/main/resources/d18/test1.txt.txt"))
                      .stream()
                      .map(Cube::of)
                      .collect(Collectors.toSet());

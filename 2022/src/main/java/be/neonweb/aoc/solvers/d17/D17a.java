@@ -19,7 +19,7 @@ public class D17a extends Solver {
 
     @Override
     public void parse() throws Exception {
-        jets = Files.readAllLines(Path.of("src/main/resources/d17/test1.txt"))
+        jets = Files.readAllLines(Path.of("src/main/resources/d17/test1.txt.txt"))
                     .stream()
                     .map(line -> line.split(""))
                     .flatMap(Arrays::stream)

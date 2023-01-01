@@ -26,7 +26,7 @@ public class D16a extends Solver {
 
     @Override
     public void parse() throws Exception {
-        valves = Files.readAllLines(Path.of("src/main/resources/d16/test1.txt"))
+        valves = Files.readAllLines(Path.of("src/main/resources/d16/test1.txt.txt"))
                       .stream()
                       .map(Valve::of)
                       .collect(Collectors.toMap(Valve::getName, Function.identity()));

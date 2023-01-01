@@ -21,7 +21,7 @@ public class D23a extends Solver {
 
     @Override
     public void parse() throws Exception {
-        List<String> lines = Files.readAllLines(Path.of("src/main/resources/d23/test1.txt"));
+        List<String> lines = Files.readAllLines(Path.of("src/main/resources/d23/test1.txt.txt"));
         int index = 0;
         for (int y = 0; y < lines.size(); y++) {
             String[] split = lines.get(y)

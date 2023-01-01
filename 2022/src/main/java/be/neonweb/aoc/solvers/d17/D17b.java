@@ -13,7 +13,7 @@ public class D17b extends D17a {
 
     @Override
     public void parse() throws Exception {
-        jets = Files.readAllLines(Path.of("src/main/resources/d17/test1.txt"))
+        jets = Files.readAllLines(Path.of("src/main/resources/d17/test1.txt.txt"))
                     .stream()
                     .map(line -> line.split(""))
                     .flatMap(Arrays::stream)
