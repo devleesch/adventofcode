@@ -67,13 +67,13 @@ public class Monkey {
                 if ("+".equals(nextMonkey.getOperation()
                                          .getSign())) {
                     while (reduce.compareTo(new BigDecimal(nextMonkey.getOperation()
-                                                                     .getValue())) < 1) {
+                                                                     .getDecimal())) < 1) {
                         reduce = reduce.add(new BigDecimal(nextMonkey.getTest()
                                                                      .getDivisibleBy()));
                     }
 
                     newItem.setWorryLevel(reduce.subtract(new BigDecimal(nextMonkey.getOperation()
-                                                                                   .getValue())));
+                                                                                   .getDecimal())));
                 }
             }
 

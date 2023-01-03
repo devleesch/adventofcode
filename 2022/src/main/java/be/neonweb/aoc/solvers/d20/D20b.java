@@ -33,7 +33,7 @@ public class D20b extends D20a {
                 Long newIndex = currentIndex + bloc.getValue();
                 newIndex = getLoopIndex(newIndex);
 
-                //log.info(bloc.getValue() + " moves between " + decrypted.get(newIndex) + " and " + decrypted.get(getLoopIndex(newIndex + 1)));
+                //log.info(bloc.getDecimal() + " moves between " + decrypted.get(newIndex) + " and " + decrypted.get(getLoopIndex(newIndex + 1)));
                 decrypted.remove(bloc);
                 decrypted.add(newIndex.intValue(), bloc);
                 //log.info("" + decrypted);

@@ -19,7 +19,7 @@ public class D17a extends Solver {
 
     @Override
     public void parse() throws Exception {
-        jets = Files.readAllLines(Path.of("src/main/resources/d17/test1.txt.txt"))
+        jets = Files.readAllLines(Path.of("src/main/resources/d17/input.txt"))
                     .stream()
                     .map(line -> line.split(""))
                     .flatMap(Arrays::stream)
@@ -36,6 +36,6 @@ public class D17a extends Solver {
             chamber.turn(jets);
         }
 
-        return chamber.getHeight();
+        return chamber.getHeight() - 1;
     }
 }
