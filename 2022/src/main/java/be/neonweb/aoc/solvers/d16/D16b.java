@@ -26,7 +26,7 @@ public class D16b extends D16a {
         int eScore = score(ePath, 26);
         int score = myScore + eScore;
 
-        if (myScore >= 0 && eScore >= 0 && !valves.isEmpty()) {
+        if (score >= 0 && !valves.isEmpty()) {
             for (int i = 0; i < valves.size() / 2; i++) {
                 ArrayList<Valve> newValves = new ArrayList<>(valves);
                 ArrayList<Valve> newMyPath = new ArrayList<>(myPaths);
