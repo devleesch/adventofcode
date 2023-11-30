@@ -23,7 +23,7 @@ public class D22a extends Solver {
 
     @Override
     public void parse() throws Exception {
-        List<String> lines = Files.readAllLines(Path.of("src/main/resources/d22/test1.txt"));
+        List<String> lines = Files.readAllLines(Path.of("src/main/resources/d22/input.txt"));
 
         for (int y = 0; y < lines.size() - 2; y++) {
             String line = lines.get(y);
@@ -56,6 +56,7 @@ public class D22a extends Solver {
                 current += s;
             }
         }
+        moves.add(new Move(Integer.valueOf(current), null));
     }
 
     @Override

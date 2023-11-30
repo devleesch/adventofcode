@@ -24,13 +24,12 @@ public class Tile {
     }
 
     private int getFace(int x, int y) {
-        int size = 4;
-        if (y < size) {
+        if (y < D22b.SIZE) {
             return 1;
-        } else if (y < size * 2) {
-            return 2 + x / size;
+        } else if (y < D22b.SIZE * 2) {
+            return 2 + x / D22b.SIZE;
         } else {
-            return 3 + x / size;
+            return 3 + x / D22b.SIZE;
         }
     }
 }
