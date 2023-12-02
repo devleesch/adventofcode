@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,23 +21,21 @@ public class Aoc02 extends Solver {
     }
 
     @Override
-    public void part1(List<String> inputLines) {
+    public Object part1(List<String> inputLines) {
         games = parse(inputLines);
-        Integer sum = games.stream()
-                           .filter(game -> game.getCubeSets()
+        return games.stream()
+                    .filter(game -> game.getCubeSets()
                                                .stream()
                                                .allMatch(CubeSet::possible))
-                           .map(Game::getIndex)
-                           .reduce(0, Integer::sum);
-        log.info("sum: " + sum);
+                    .map(Game::getIndex)
+                    .reduce(0, Integer::sum);
     }
 
     @Override
-    public void part2(List<String> inputLines) {
-        Long sum = games.stream()
-                        .map(Game::power)
-                        .reduce(0L, Long::sum);
-        log.info("sum: " + sum);
+    public Object part2(List<String> inputLines) {
+        return games.stream()
+                    .map(Game::power)
+                    .reduce(0L, Long::sum);
     }
 
     public static void main(String[] args) {

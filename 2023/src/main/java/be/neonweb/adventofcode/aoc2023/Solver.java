@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Slf4j
@@ -19,9 +20,9 @@ public abstract class Solver {
         this.inputPath = Path.of(inputPath);
     }
 
-    public abstract void part1(List<String> inputLines);
+    public abstract Object part1(List<String> inputLines);
 
-    public abstract void part2(List<String> inputLines);
+    public abstract Object part2(List<String> inputLines);
 
     public List<String> readInput() throws IOException {
         return Files.readAllLines(getInputPath(), StandardCharsets.UTF_8);
@@ -33,7 +34,7 @@ public abstract class Solver {
 
             long start = System.currentTimeMillis();
             log.info("start part1");
-            part1(inputLines);
+            log.info("solution: " + part1(inputLines));
             log.info("end part1 - " + (System.currentTimeMillis() - start) + " ms");
 
             log.info("");
@@ -41,7 +42,7 @@ public abstract class Solver {
 
             start = System.currentTimeMillis();
             log.info("start part2");
-            part2(inputLines);
+            log.info("solution: " + part2(inputLines));
             log.info("end part2 - " + (System.currentTimeMillis() - start) + " ms");
         } catch (Exception e) {
             throw new RuntimeException(e);
