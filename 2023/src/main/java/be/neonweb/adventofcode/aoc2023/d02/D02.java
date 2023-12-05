@@ -1,4 +1,4 @@
-package be.neonweb.adventofcode.aoc2023.aoc02;
+package be.neonweb.adventofcode.aoc2023.d02;
 
 import be.neonweb.adventofcode.aoc2023.Solver;
 import lombok.extern.slf4j.Slf4j;
@@ -10,13 +10,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class Aoc02 extends Solver {
+public class D02 extends Solver {
 
     private static final Pattern GAME_PATTERN = Pattern.compile("Game ([0-9]+)");
     private static final Pattern COLOR_PATTERN = Pattern.compile("([0-9]+) ([a-z]+)");
     private List<Game> games;
 
-    public Aoc02(String inputPath) {
+    public D02(String inputPath) {
         super(inputPath);
     }
 
@@ -39,8 +39,8 @@ public class Aoc02 extends Solver {
     }
 
     public static void main(String[] args) {
-        Aoc02 aoc02 = new Aoc02("src/main/resources/02/input.txt");
-        Solver.run(aoc02);
+        D02 d02 = new D02("src/main/resources/02/input.txt");
+        Solver.run(d02);
     }
 
     private List<Game> parse(List<String> lines) {

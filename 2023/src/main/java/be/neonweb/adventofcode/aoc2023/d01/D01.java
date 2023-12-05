@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class Aoc01 extends Solver {
+public class D01 extends Solver {
 
     private static final Pattern PATTERN = Pattern.compile("one|two|three|four|five|six|seven|eight|nine");
     private static final Map<String, String> CONVERTER = new HashMap<>();
@@ -25,7 +25,7 @@ public class Aoc01 extends Solver {
         CONVERTER.put("nine", "9");
     }
 
-    public Aoc01(String inputPath) {
+    public D01(String inputPath) {
         super(inputPath);
     }
 
@@ -45,8 +45,8 @@ public class Aoc01 extends Solver {
     }
 
     public static void main(String[] args) {
-        Aoc01 aoc01 = new Aoc01("src/main/resources/01/input.txt");
-        Solver.run(aoc01);
+        D01 d01 = new D01("src/main/resources/01/input.txt");
+        Solver.run(d01);
     }
 
     private Integer extract(String line) {

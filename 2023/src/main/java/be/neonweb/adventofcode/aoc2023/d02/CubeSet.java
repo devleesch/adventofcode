@@ -1,4 +1,4 @@
-package be.neonweb.adventofcode.aoc2023.aoc02;
+package be.neonweb.adventofcode.aoc2023.d02;
 
 import lombok.Data;
 
