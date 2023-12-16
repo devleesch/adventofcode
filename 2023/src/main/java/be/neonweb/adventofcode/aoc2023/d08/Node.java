@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 @Data
 public class Node {
 
-    private static final Pattern PATTERN = Pattern.compile("(?<element>[A-Z]{3}) = \\((?<left>[A-Z]{3}), (?<right>[A-Z]{3})\\)");
+    private static final Pattern PATTERN = Pattern.compile("(?<element>[A-Z0-9]{3}) = \\((?<left>[A-Z0-9]{3}), (?<right>[A-Z0-9]{3})\\)");
 
     private String element;
 

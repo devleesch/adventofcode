@@ -1,9 +1,16 @@
 package be.neonweb.adventofcode.aoc2023.d08;
 
-public enum Instruction {
+import java.util.function.Function;
 
-    LEFT,
-    RIGHT;
+public enum Instruction {
+    LEFT(Node::getLeft),
+    RIGHT(Node::getRight);
+
+    private Function<Node, Node> next;
+
+    Instruction(Function<Node, Node> next) {
+        this.next = next;
+    }
 
     public static Instruction of(String s) {
         return switch (s) {
@@ -11,6 +18,10 @@ public enum Instruction {
             case "R" -> RIGHT;
             default -> throw new RuntimeException();
         };
+    }
+
+    public Node next(Node node) {
+        return next.apply(node);
     }
 
 }
