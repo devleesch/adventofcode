@@ -34,7 +34,8 @@ public class D08 extends Solver {
                                .map(this::stepsToEndZ)
                                .toList();
 
-        return MathUtil.ppcm(loop).longValue();
+        return MathUtil.ppcm(loop)
+                       .longValue();
     }
 
     public long stepsToZ(Node current) {
