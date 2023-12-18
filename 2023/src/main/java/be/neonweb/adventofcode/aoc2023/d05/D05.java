@@ -14,8 +14,6 @@ public class D05 extends Solver {
     private static final Pattern PATTERN_MAPPER = Pattern.compile("(.*)-to-(.*) map:");
     private static final Pattern PATTERN_RANGE = Pattern.compile("([0-9]+) ([0-9]+) ([0-9]+)");
 
-    private static final Map<String, Long> MEMORY = new HashMap<>();
-
     private List<State> states;
     private List<Mapper> mappers;
 
@@ -47,27 +45,16 @@ public class D05 extends Solver {
 
             for (long j = 0; j < length.getValue(); j++) {
                 if (j % 100000 == 0) {
-                    log.info("i: " + i + " - j:" + j + " - MEMORY: " + MEMORY.size());
+                    log.info(i + " -> " + j + " / " + length.getValue() + "("+ (double) j / (double) length.getValue() * 100 +"%)");
                 }
                 State state = State.builder()
                                    .name("seed")
                                    .value(start.getValue() + j)
                                    .build();
 
-                Map<String, Long> memory = new HashMap<>();
                 for (Mapper mapper : mappers) {
-                    String key = state.getName() + "-" + state.getValue();
-                    if (MEMORY.containsKey(key)) {
-                        state.setValue(MEMORY.get(key));
-                        break;
-                    }
                     state.apply(mapper);
-                    memory.put(key, Long.MAX_VALUE);
                 }
-                memory.entrySet()
-                      .forEach(entry -> entry.setValue(state.getValue()));
-
-                MEMORY.putAll(memory);
 
                 if (state.getValue() < min) {
                     min = state.getValue();
