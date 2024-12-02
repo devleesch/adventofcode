@@ -27,21 +27,9 @@ public class D01 {
                  right.add(pair.getRight());
              });
 
-        Stack<Long> stackLeft = new Stack<>();
-        stackLeft.addAll(left.stream()
-                             .sorted(Comparator.reverseOrder())
-                             .toList());
-
-        Stack<Long> stackRight = new Stack<>();
-        stackRight.addAll(right.stream()
-                               .sorted(Comparator.reverseOrder())
-                               .toList());
-
         List<Pair> sortedPairs = new ArrayList<>();
-        while (!stackLeft.isEmpty()) {
-            Long l = stackLeft.pop();
-            Long r = stackRight.pop();
-            sortedPairs.add(new Pair(l, r));
+        for (int i = 0; i < left.size(); i++) {
+            sortedPairs.add(new Pair(left.get(i), right.get(i)));
         }
 
         sortedPairs.stream()
