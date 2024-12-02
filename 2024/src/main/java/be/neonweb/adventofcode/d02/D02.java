@@ -1,36 +1,12 @@
 package be.neonweb.adventofcode.d02;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import be.neonweb.adventofcode.Day;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class D02 {
-
-    public static void main(String[] args) throws IOException {
-        List<String> lines = Files.readAllLines(Path.of("input/d02/input.txt"));
-        long count = lines.stream()
-                          .map(s -> Arrays.asList(s.split(" ")))
-                          .map(lString -> lString.stream()
-                                                 .map(Integer::valueOf)
-                                                 .toList())
-                          .filter(D02::isValid)
-                          .count();
-
-        System.out.println("part1: " + count);
-
-        long count2 = lines.stream()
-                          .map(s -> Arrays.asList(s.split(" ")))
-                          .map(lString -> lString.stream()
-                                                 .map(Integer::valueOf)
-                                                 .toList())
-                          .filter(D02::isValid2)
-                          .count();
-
-        System.out.println("part2: " + count2);
-    }
+public class D02 extends Day {
 
     public static boolean isValid(List<Integer> l) {
         if (l.size() < 2) {
@@ -65,7 +41,7 @@ public class D02 {
 
         if (!valid) {
             for (int i = 0; i < l.size(); i++) {
-                ArrayList subL = new ArrayList(l);
+                ArrayList<Integer> subL = new ArrayList<>(l);
                 subL.remove(i);
                 if (isValid(subL)) {
                     return true;
@@ -76,4 +52,32 @@ public class D02 {
         return valid;
     }
 
+    @Override
+    public String getDay() {
+        return "02";
+    }
+
+    @Override
+    public String part1(List<String> lines) {
+        long count = lines.stream()
+                          .map(s -> Arrays.asList(s.split(" ")))
+                          .map(lString -> lString.stream()
+                                                 .map(Integer::valueOf)
+                                                 .toList())
+                          .filter(D02::isValid)
+                          .count();
+        return Long.toString(count);
+    }
+
+    @Override
+    public String part2(List<String> lines) {
+        long count = lines.stream()
+                          .map(s -> Arrays.asList(s.split(" ")))
+                          .map(lString -> lString.stream()
+                                                 .map(Integer::valueOf)
+                                                 .toList())
+                          .filter(D02::isValid2)
+                          .count();
+        return Long.toString(count);
+    }
 }
