@@ -1,6 +1,5 @@
 package be.neonweb.adventofcode;
 
-import be.neonweb.adventofcode.d02.D02;
 import be.neonweb.adventofcode.d03.D03;
 
 public class Main {
