@@ -27,7 +27,7 @@ public class D05 extends Day {
                          return Pair.of(Integer.parseInt(split1[0]), Integer.parseInt(split1[1]));
                      })
                      .collect(Collectors.toMap(
-                             pair -> pair.getLeft(),
+                             Pair::getLeft,
                              pair -> Set.of(pair.getRight()),
                              (l1, l2) -> {
                                  Set<Integer> newSet = new HashSet<>();
