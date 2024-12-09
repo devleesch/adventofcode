@@ -12,11 +12,6 @@ public class D05 extends Day {
     private List<List<Integer>> updates;
 
     @Override
-    public String getDay() {
-        return "05";
-    }
-
-    @Override
     public String part1(List<String> lines) {
         int split = lines.indexOf("");
 

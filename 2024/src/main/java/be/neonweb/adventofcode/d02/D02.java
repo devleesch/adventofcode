@@ -53,11 +53,6 @@ public class D02 extends Day {
     }
 
     @Override
-    public String getDay() {
-        return "02";
-    }
-
-    @Override
     public String part1(List<String> lines) {
         long count = lines.stream()
                           .map(s -> Arrays.asList(s.split(" ")))

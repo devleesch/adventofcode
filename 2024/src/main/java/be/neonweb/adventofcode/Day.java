@@ -17,15 +17,15 @@ public abstract class Day {
     }
 
     public void run() throws IOException {
-        run(Path.of("input/d" + getDay() + "/input.txt"));
+        run("input.txt");
     }
 
     public void run(String fileName) throws IOException {
-        run(Path.of("input/d" + getDay() + "/" + fileName));
+        run(Path.of("input/" + getDay() + "/" + fileName));
     }
 
     public void run(Path input) throws IOException {
-        log.info("Starting Day {}", getDay());
+        log.info("Starting {}", getDay());
         List<String> lines = read(input);
 
         StopWatch stopWatch = new StopWatch();
@@ -47,10 +47,14 @@ public abstract class Day {
         stopWatch.stop();
         log.info("part 2 done in {}", stopWatch);
 
-        log.info("End Day {}", getDay());
+        log.info("End {}", getDay());
     }
 
-    public abstract String getDay();
+    public String getDay() {
+        return this.getClass()
+                   .getSimpleName()
+                   .toLowerCase();
+    }
 
     public abstract String part1(List<String> lines);
 

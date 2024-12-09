@@ -10,10 +10,6 @@ import java.util.stream.IntStream;
 
 @Slf4j
 public class D09 extends Day {
-    @Override
-    public String getDay() {
-        return "09";
-    }
 
     @Override
     public String part1(List<String> lines) {

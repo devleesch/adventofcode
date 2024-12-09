@@ -17,11 +17,6 @@ public class D08 extends Day {
     private int y1;
 
     @Override
-    public String getDay() {
-        return "08";
-    }
-
-    @Override
     public String part1(List<String> lines) {
         positions = IntStream.range(0, lines.size())
                              .mapToObj(y -> IntStream.range(0, lines.get(y)

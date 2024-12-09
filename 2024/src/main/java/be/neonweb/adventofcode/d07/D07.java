@@ -13,10 +13,6 @@ import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 public class D07 extends Day {
-    @Override
-    public String getDay() {
-        return "07";
-    }
 
     @Override
     public String part1(List<String> lines) {

@@ -12,11 +12,6 @@ import java.util.stream.Stream;
 public class D04 extends Day {
 
     @Override
-    public String getDay() {
-        return "04";
-    }
-
-    @Override
     public String part1(List<String> lines) {
         List<Point> points = new ArrayList<>();
         for (int y = 0; y < lines.size(); y++) {

@@ -15,11 +15,6 @@ public class D03 extends Day {
     private static final Pattern PATTERN_SWITCH = Pattern.compile("(do\\(\\)|don't\\(\\))");
 
     @Override
-    public String getDay() {
-        return "03";
-    }
-
-    @Override
     public String part1(List<String> lines) {
         return lines.stream()
                     .map(PATTERN_MUL::matcher)
