@@ -84,15 +84,10 @@ public class D14 extends Day {
             robots.forEach(robot -> robot.move(x1, y1));
 
             //if (j == 98 || (j-98) % 103 == 0) {
-            if (j == 7411) {
+            if (j <= 7411) {
                 log.info(String.valueOf(j));
                 image.setIcon(new ImageIcon(image(x1, y1, robots)));
                 turn.setText(String.valueOf(j));
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
             }
         }
 
