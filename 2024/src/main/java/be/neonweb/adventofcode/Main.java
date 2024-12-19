@@ -1,6 +1,6 @@
 package be.neonweb.adventofcode;
 
-import be.neonweb.adventofcode.d15.D15;
+import be.neonweb.adventofcode.d16.D16;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
-        Day d = new D15();
+        Day d = new D16();
 
         loggerContext.getLoggerList()
                      .forEach(logger -> logger.setLevel(Level.WARN));
