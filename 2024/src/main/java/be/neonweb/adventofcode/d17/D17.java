@@ -46,17 +46,17 @@ public class D17 extends Day {
 
         // 2,4,1,5,7,5,0,3,1,6,4,3,5,5,3,0
         //BigInteger i = new BigInteger("100000000000000");
-        BigInteger i = new BigInteger("00000000000000");
-        Computer copy = computer.copy();
-        do {
-            copy.setRegisterA(i);
-            copy.run(program);
-            log.info("i = {} - computer = {}", i, copy);
-            i = i.add(BigInteger.ONE);
-            copy = computer.copy();
-        } while (!copy.getOutputs().equals(program));
+        String t = "000000000000000";
 
-        return String.valueOf(i);
+        for (int i = 0; i <= 9; i++) {
+            Computer copy = computer.copy();
+            String s = t.replaceAll("0", Integer.toString(i));
+            copy.setRegisterA(new BigInteger(s));
+            copy.run(program);
+            log.info("s = {} - output = {}", s, copy.getOutputsString());
+        }
+
+        return "";
     }
 
     @Getter
