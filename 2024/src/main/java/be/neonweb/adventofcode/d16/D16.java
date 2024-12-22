@@ -60,41 +60,39 @@ public class D16 extends Day {
     }
 
     public static void explore(Path path, End end, List<Wall> walls, List<Path> paths) {
-        if (!path.isTerminated(end)) {
+        //log.info("path = {}", path);
+        if (!path.isTerminated(end) && (paths.isEmpty() || path.score() < paths.getLast()
+                                                                               .score())) {
             path.visited.add(path.getReindeer()
                                  .getPosition());
 
             Path copy = path.copy();
-            copy.getMoves()
-                .add(Move.FORWARD);
-            copy.getReindeer()
-                .move(walls);
+            copy.reindeer.move(walls);
+            copy.moves.add(Move.FORWARD);
             explore(copy, end, walls, paths);
 
-            copy = path.copy();
-            copy.getMoves()
-                .add(Move.ROTATE);
-            copy.getReindeer()
-                .setDirection(path.getReindeer()
-                                  .getDirection()
-                                  .counterclockwise());
-            explore(copy, end, walls, paths);
+            if (path.moves.isEmpty() || path.moves.getLast()
+                                                  .equals(Move.FORWARD)) {
+                copy = path.copy();
+                copy.reindeer.setDirection(copy.reindeer.direction.counterclockwise());
+                copy.moves.add(Move.ROTATE_COUNTERCLOCKWISE);
+                explore(copy, end, walls, paths);
+            }
 
-            copy = path.copy();
-            copy.getMoves()
-                .add(Move.ROTATE);
-            copy.getReindeer()
-                .setDirection(path.getReindeer()
-                                  .getDirection()
-                                  .clockwise());
-            explore(copy, end, walls, paths);
+            if (path.moves.isEmpty() || path.moves.getLast()
+                                                  .equals(Move.FORWARD)) {
+                copy = path.copy();
+                copy.reindeer.setDirection(copy.reindeer.direction.clockwise());
+                copy.moves.add(Move.ROTATE_CLOCKWISE);
+                explore(copy, end, walls, paths);
+            }
         }
 
-        if (path.getReindeer()
-                .getPosition()
-                .equals(end.getPosition())) {
+        if (path.reindeer.getPosition()
+                         .equals(end
+                                 .getPosition())) {
+            log.info("score = {}, path = {}", path.score(), path);
             paths.add(path);
-            log.info("paths.size() = {}", paths.size());
         }
     }
 
@@ -229,7 +227,9 @@ public class D16 extends Day {
     @ToString
     public static class Path {
         private Reindeer reindeer;
+        //@ToString.Exclude
         private List<Position> visited = new ArrayList<>();
+        //@ToString.Exclude
         private List<Move> moves = new ArrayList<>();
 
         public Path copy() {
@@ -244,10 +244,7 @@ public class D16 extends Day {
             return reindeer.getPosition()
                            .equals(end.getPosition())
                     || (!moves.isEmpty() && moves.getLast()
-                                                 .equals(Move.FORWARD) && visited.contains(reindeer.getPosition())
-                    || (moves.size() >= 2 && moves.subList(moves.size() - 2, moves.size())
-                                                  .stream()
-                                                  .allMatch(m -> m.equals(Move.ROTATE))));
+                                                 .equals(Move.FORWARD) && visited.contains(reindeer.getPosition()));
         }
 
         public int score() {
@@ -260,7 +257,8 @@ public class D16 extends Day {
     @Getter
     public enum Move {
         FORWARD(1),
-        ROTATE(1000);
+        ROTATE_COUNTERCLOCKWISE(1000),
+        ROTATE_CLOCKWISE(1000);
 
         private int point;
 
