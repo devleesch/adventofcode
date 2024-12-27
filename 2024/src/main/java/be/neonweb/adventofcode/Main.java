@@ -20,6 +20,6 @@ public class Main {
                                              .startsWith("be.neonweb.adventofcode"))
                      .forEach(logger -> logger.setLevel(Level.INFO));
 
-        d.run("test2.txt");
+        d.run();
     }
 }
