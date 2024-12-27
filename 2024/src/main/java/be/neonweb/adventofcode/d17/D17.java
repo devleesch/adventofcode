@@ -19,13 +19,17 @@ public class D17 extends Day {
     public String part1(List<String> lines) {
         Computer computer = new Computer();
 
-        computer.setRegisterA(new BigInteger(lines.get(0).split(": ")[1]));
-        computer.setRegisterB(new BigInteger(lines.get(1).split(": ")[1]));
-        computer.setRegisterC(new BigInteger(lines.get(2).split(": ")[1]));
+        computer.setRegisterA(new BigInteger(lines.get(0)
+                                                  .split(": ")[1]));
+        computer.setRegisterB(new BigInteger(lines.get(1)
+                                                  .split(": ")[1]));
+        computer.setRegisterC(new BigInteger(lines.get(2)
+                                                  .split(": ")[1]));
 
-        List<Integer> program = Arrays.stream(lines.get(4).split(": ")[1].split(","))
-                .map(Integer::parseInt)
-                .toList();
+        List<Integer> program = Arrays.stream(lines.get(4)
+                                                   .split(": ")[1].split(","))
+                                      .map(Integer::parseInt)
+                                      .toList();
 
         computer.run(program);
 
@@ -36,24 +40,39 @@ public class D17 extends Day {
     public String part2(List<String> lines) {
         Computer computer = new Computer();
 
-        computer.setRegisterA(new BigInteger(lines.get(0).split(": ")[1]));
-        computer.setRegisterB(new BigInteger(lines.get(1).split(": ")[1]));
-        computer.setRegisterC(new BigInteger(lines.get(2).split(": ")[1]));
+        computer.setRegisterA(new BigInteger(lines.get(0)
+                                                  .split(": ")[1]));
+        computer.setRegisterB(new BigInteger(lines.get(1)
+                                                  .split(": ")[1]));
+        computer.setRegisterC(new BigInteger(lines.get(2)
+                                                  .split(": ")[1]));
 
-        List<Integer> program = Arrays.stream(lines.get(4).split(": ")[1].split(","))
-                .map(Integer::parseInt)
-                .toList();
+        List<Integer> program = Arrays.stream(lines.get(4)
+                                                   .split(": ")[1].split(","))
+                                      .map(Integer::parseInt)
+                                      .toList();
 
-        // 2,4,1,5,7,5,0,3,1,6,4,3,5,5,3,0
-        //BigInteger i = new BigInteger("100000000000000");
-        String t = "000000000000000";
+        List<String> input = Arrays.asList("000000".split(""));
+        List<List<String>> possibilities = new ArrayList<>();
+        for (int i = 0; i < input.size(); i++) {
+            possibilities.add(new ArrayList<>());
+            for (int j = 0; j < 10; j++) {
+                Computer copy = computer.copy();
+                input.set(i, String.valueOf(j));
+                copy.setRegisterA(new BigInteger(String.join("", input)));
+                copy.run(program);
 
-        for (int i = 0; i <= 9; i++) {
-            Computer copy = computer.copy();
-            String s = t.replaceAll("0", Integer.toString(i));
-            copy.setRegisterA(new BigInteger(s));
-            copy.run(program);
-            log.info("s = {} - output = {}", s, copy.getOutputsString());
+                if (program.size() == copy.outputs.size() && program.get(program.size() - 1 - i)
+                                                                    .equals(copy.outputs.get(program.size() - 1 - i))) {
+                    possibilities.get(i)
+                                 .add(String.valueOf(j));
+                }
+
+                System.out.println("input  : " + input);
+                System.out.println("outputs: " + copy.getOutputs());
+                System.out.println("program: " + program);
+                System.out.println();
+            }
         }
 
         return "";
@@ -113,8 +132,8 @@ public class D17 extends Day {
 
         public String getOutputsString() {
             return outputs.stream()
-                    .map(Object::toString)
-                    .collect(Collectors.joining(","));
+                          .map(Object::toString)
+                          .collect(Collectors.joining(","));
         }
 
         public Computer copy() {
@@ -130,37 +149,49 @@ public class D17 extends Day {
 
     public enum Ins {
         ADV((integer, computer) -> {
-            BigInteger value = computer.getRegisterA().divide(BigInteger.TWO.pow(computer.getComboOperand(integer).intValue()));
+            BigInteger value = computer.getRegisterA()
+                                       .divide(BigInteger.TWO.pow(computer.getComboOperand(integer)
+                                                                          .intValue()));
             computer.setRegisterA(value);
             computer.movePointer();
         }), BXL((integer, computer) -> {
-            BigInteger value = computer.getRegisterB().xor(new BigInteger(String.valueOf(integer)));
+            BigInteger value = computer.getRegisterB()
+                                       .xor(new BigInteger(String.valueOf(integer)));
             computer.setRegisterB(value);
             computer.movePointer();
         }), BST((integer, computer) -> {
-            BigInteger value = computer.getComboOperand(integer).mod(new BigInteger(String.valueOf(8)));
+            BigInteger value = computer.getComboOperand(integer)
+                                       .mod(new BigInteger(String.valueOf(8)));
             computer.setRegisterB(value);
             computer.movePointer();
         }), JNZ((integer, computer) -> {
-            if (computer.getRegisterA().compareTo(BigInteger.ZERO) != 0) {
+            if (computer.getRegisterA()
+                        .compareTo(BigInteger.ZERO) != 0) {
                 computer.movePointer(integer);
             } else {
                 computer.movePointer();
             }
         }), BXC((integer, computer) -> {
-            BigInteger value = computer.getRegisterB().xor(computer.getRegisterC());
+            BigInteger value = computer.getRegisterB()
+                                       .xor(computer.getRegisterC());
             computer.setRegisterB(value);
             computer.movePointer();
         }), OUT((integer, computer) -> {
-            BigInteger value = computer.getComboOperand(integer).mod(new BigInteger(String.valueOf(8)));
-            computer.getOutputs().add(value.intValue());
+            BigInteger value = computer.getComboOperand(integer)
+                                       .mod(new BigInteger(String.valueOf(8)));
+            computer.getOutputs()
+                    .add(value.intValue());
             computer.movePointer();
         }), BDV((integer, computer) -> {
-            BigInteger value = computer.getRegisterA().divide(BigInteger.TWO.pow(computer.getComboOperand(integer).intValue()));
+            BigInteger value = computer.getRegisterA()
+                                       .divide(BigInteger.TWO.pow(computer.getComboOperand(integer)
+                                                                          .intValue()));
             computer.setRegisterB(value);
             computer.movePointer();
         }), CDV((integer, computer) -> {
-            BigInteger value = computer.getRegisterA().divide(BigInteger.TWO.pow(computer.getComboOperand(integer).intValue()));
+            BigInteger value = computer.getRegisterA()
+                                       .divide(BigInteger.TWO.pow(computer.getComboOperand(integer)
+                                                                          .intValue()));
             computer.setRegisterC(value);
             computer.movePointer();
         });
