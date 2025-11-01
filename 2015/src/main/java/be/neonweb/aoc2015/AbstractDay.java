@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -20,7 +19,8 @@ public abstract class AbstractDay {
     public void run() throws IOException {
         StopWatch runSW = new StopWatch();
         runSW.start();
-        log.info("starting {}", this.getClass().getName());
+        log.info("starting {}", this.getClass()
+                                    .getName());
 
         File file = loadInput();
         lines = Files.readAllLines(file.toPath());
@@ -42,10 +42,13 @@ public abstract class AbstractDay {
     }
 
     private File loadInput() {
-        return new File("src/main/resources/" + this.getClass().getSimpleName().toLowerCase() + "/input.txt");
+        return new File("src/main/resources/" + this.getClass()
+                                                    .getSimpleName()
+                                                    .toLowerCase() + "/input.txt");
     }
 
     public abstract Object part1();
+
     public abstract Object part2();
 
 }
