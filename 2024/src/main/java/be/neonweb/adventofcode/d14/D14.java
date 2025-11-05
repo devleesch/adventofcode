@@ -57,11 +57,14 @@ public class D14 extends Day {
         int x1 = 101;
         int y1 = 103;
 
+        for (int i = 0; i < 99; i++) {
+            robots.forEach(robot -> robot.move(x1, y1));
+        }
+
         JFrame jFrame = new JFrame();
         jFrame.setLayout(new FlowLayout());
 
         JLabel image = new JLabel(new ImageIcon(image(x1, y1, robots)));
-        //image.setBounds(2, 2, x1 * 5, y1 * 5);
         jFrame.add(image);
 
         JLabel turn = new JLabel();
@@ -71,15 +74,19 @@ public class D14 extends Day {
         JButton next = new JButton("Next");
         AtomicInteger i = new AtomicInteger(0);
         next.addActionListener(e -> {
-            robots.forEach(robot -> robot.move(x1, y1));
+            for (int j = 0; j < 103; j++) {
+                robots.forEach(robot -> robot.move(x1, y1));
+            }
+
             image.setIcon(new ImageIcon(image(x1, y1, robots)));
-            turn.setText(String.valueOf(i.incrementAndGet()));
+            turn.setText(String.valueOf(i.addAndGet(103)));
         });
         jFrame.add(next);
 
         jFrame.setBounds(0, 0, x1 * 5 + 20, y1 * 5 + 75);
         jFrame.setVisible(true);
 
+        /*
         for (int j = 0; j < 1_000_000; j++) {
             robots.forEach(robot -> robot.move(x1, y1));
 
@@ -90,6 +97,7 @@ public class D14 extends Day {
                 turn.setText(String.valueOf(j));
             }
         }
+        */
 
         return "";
     }
