@@ -15,16 +15,18 @@ public abstract class Solver {
 
     protected List<String> lines;
 
-    public abstract List<String> readFile() throws Exception;
+    public abstract void parseFile() throws Exception;
+
     public abstract Object part1();
+
     public abstract Object part2();
 
-    public List<String> readFile(String fileName) throws IOException {
+    public void readFile(String fileName) throws IOException {
         if (Objects.isNull(fileName)) {
             fileName = "input.txt";
         }
 
-        return Files.readAllLines(Path.of("src/main/resources",
+        this.lines = Files.readAllLines(Path.of("src/main/resources",
                 this.getClass()
                     .getSimpleName()
                     .toLowerCase(),
@@ -34,7 +36,7 @@ public abstract class Solver {
     public void run() throws Exception {
         Instant start = Instant.now();
 
-        lines = readFile();
+        parseFile();
 
         Instant start1 = Instant.now();
         Object result1 = part1();
