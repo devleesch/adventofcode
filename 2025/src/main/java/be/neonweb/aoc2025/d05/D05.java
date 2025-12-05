@@ -52,12 +52,9 @@ public class D05 extends Solver {
                                              .collect(Collectors.toList());
             if (!includes.isEmpty()) {
                 results.removeAll(includes);
-
-                includes.add(interval);
-                results.add(Interval.merge(includes));
-            } else {
-                results.add(interval);
             }
+            includes.add(interval);
+            results.add(Interval.merge(includes));
             results.sort(Comparator.comparing(Interval::getStart));
         }
         return results.stream()
