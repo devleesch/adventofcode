@@ -15,7 +15,7 @@ public class D07 extends Solver {
 
     @Override
     public void parseFile() throws Exception {
-        //readFile("test1.txt");
+        //readFile("test1.txt.txt");
         readFile(null);
     }
 
