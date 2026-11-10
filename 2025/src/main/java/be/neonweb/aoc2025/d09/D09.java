@@ -9,6 +9,7 @@ import lombok.ToString;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class D09 extends Solver {
@@ -45,78 +46,8 @@ public class D09 extends Solver {
     public Object part2() {
         Polygon polygon = new Polygon();
 
-        List<Point> minXs = getBorder(points,
-                Point::getX,
-                stream -> stream.min(Integer::compareTo),
-                Comparator.comparing(Point::getY)
-                          .reversed()
-        );
-        polygon.getPoints()
-               .addAll(minXs);
-
-        List<Point> minYs = getBorder(points,
-                Point::getY,
-                stream -> stream.min(Integer::compareTo),
-                Comparator.comparing(Point::getX)
-        );
-
-        Point c1 = new Point(minYs.getFirst()
-                                  .getX(), minXs.getLast()
-                                                .getY());
-        polygon.getPoints()
-               .add(points.stream()
-                          .filter(point -> point.equals(c1))
-                          .findFirst()
-                          .orElseThrow());
-
-        polygon.getPoints()
-               .addAll(minYs);
-
-        List<Point> maxXs = getBorder(points,
-                Point::getX,
-                stream -> stream.max(Integer::compareTo),
-                Comparator.comparing(Point::getY)
-        );
-
-        Point c2 = new Point(minYs.getLast()
-                                  .getX(), maxXs.getFirst()
-                                                .getY());
-        polygon.getPoints()
-               .add(points.stream()
-                          .filter(point -> point.equals(c2))
-                          .findFirst()
-                          .orElseThrow());
-
-        polygon.getPoints()
-               .addAll(maxXs);
-
-        List<Point> maxYs = getBorder(points,
-                Point::getY,
-                stream -> stream.max(Integer::compareTo),
-                Comparator.comparing(Point::getX)
-                          .reversed()
-        );
-
-        Point c3 = new Point(maxYs.getFirst()
-                                  .getX(), maxXs.getLast()
-                                                .getY());
-        polygon.getPoints()
-               .add(points.stream()
-                          .filter(point -> point.equals(c3))
-                          .findFirst()
-                          .orElseThrow());
-
-        polygon.getPoints()
-               .addAll(maxYs);
-
-        Point c4 = new Point(maxYs.getLast()
-                                  .getX(), minXs.getFirst()
-                                                .getY());
-        polygon.getPoints()
-               .add(points.stream()
-                          .filter(point -> point.equals(c4))
-                          .findFirst()
-                          .orElseThrow());
+        Map<Integer, List<Point>> collect = points.stream()
+                                                  .collect(Collectors.groupingBy(Point::getX));
 
         return null;
     }
